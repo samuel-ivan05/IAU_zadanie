@@ -1,0 +1,975 @@
+<title>Fáza 1 – APU dáta</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<style>
+:root{
+  --bg:#f3f5fa;
+  --surface:#ffffff;
+  --surface-2:#eaedf6;
+  --border:#dce1ee;
+  --text:#1a2233;
+  --text-muted:#5b6478;
+  --accent:#2454d6;
+  --accent-ink:#13327a;
+  --accent-wash:#e7edfd;
+  --amber:#a8590a;
+  --amber-wash:#fbf1de;
+  --amber-ink:#7a4005;
+  --red:#b3261e;
+  --red-wash:#fbeae9;
+  --green:#1a7a4c;
+  --green-wash:#e6f5ec;
+  --code-bg:#121831;
+  --code-text:#dfe6f7;
+  --code-border:#262f52;
+  --shadow: 0 1px 2px rgba(20,30,60,.04), 0 8px 24px -16px rgba(20,30,60,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1220;
+    --surface:#151c30;
+    --surface-2:#1c2440;
+    --border:#2b3657;
+    --text:#e8ebf4;
+    --text-muted:#99a4c2;
+    --accent:#7094ff;
+    --accent-ink:#c3d3ff;
+    --accent-wash:#1b2548;
+    --amber:#f0a93f;
+    --amber-wash:#2e2410;
+    --amber-ink:#ffd38a;
+    --red:#ff9387;
+    --red-wash:#331716;
+    --green:#6fd3a0;
+    --green-wash:#102a1d;
+    --code-bg:#0a0e1d;
+    --code-text:#dfe6f7;
+    --code-border:#232c4d;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -16px rgba(0,0,0,.6);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1220;
+  --surface:#151c30;
+  --surface-2:#1c2440;
+  --border:#2b3657;
+  --text:#e8ebf4;
+  --text-muted:#99a4c2;
+  --accent:#7094ff;
+  --accent-ink:#c3d3ff;
+  --accent-wash:#1b2548;
+  --amber:#f0a93f;
+  --amber-wash:#2e2410;
+  --amber-ink:#ffd38a;
+  --red:#ff9387;
+  --red-wash:#331716;
+  --green:#6fd3a0;
+  --green-wash:#102a1d;
+  --code-bg:#0a0e1d;
+  --code-text:#dfe6f7;
+  --code-border:#232c4d;
+  --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px -16px rgba(0,0,0,.6);
+}
+
+*{box-sizing:border-box;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:"IBM Plex Serif", Georgia, serif;
+  font-size:17px;
+  line-height:1.65;
+}
+h1,h2,h3,h4,.sans{ font-family:"IBM Plex Sans", system-ui, sans-serif; text-wrap:balance; }
+code,pre,.mono{ font-family:"IBM Plex Mono", ui-monospace, monospace; }
+
+.wrap{ max-width:860px; margin:0 auto; padding:0 24px 96px; }
+
+/* ---------- header ---------- */
+header.hero{
+  border-bottom:1px solid var(--border);
+  padding:56px 24px 40px;
+  background:
+    linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+}
+.hero-inner{ max-width:860px; margin:0 auto; }
+.eyebrow{
+  font-family:"IBM Plex Sans",sans-serif;
+  font-size:12px; font-weight:600; letter-spacing:.11em; text-transform:uppercase;
+  color:var(--accent-ink);
+  display:flex; align-items:center; gap:8px;
+  margin-bottom:14px;
+}
+.eyebrow .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); flex:none; }
+h1.title{ font-size:clamp(30px,5vw,42px); font-weight:700; margin:0 0 14px; letter-spacing:-.01em; color:var(--text);}
+.lede{ font-size:18px; color:var(--text-muted); max-width:62ch; margin:0 0 26px; }
+.meta-row{ display:flex; flex-wrap:wrap; gap:10px; font-family:"IBM Plex Sans",sans-serif; }
+.meta-pill{
+  font-size:12.5px; font-weight:500; color:var(--text-muted);
+  border:1px solid var(--border); background:var(--surface);
+  border-radius:999px; padding:6px 12px;
+  display:flex; align-items:center; gap:6px;
+}
+.meta-pill b{ color:var(--text); font-weight:600; font-variant-numeric:tabular-nums; }
+
+/* ---------- sticky nav ---------- */
+nav.toc{
+  position:sticky; top:0; z-index:20;
+  background:color-mix(in srgb, var(--surface) 92%, transparent);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--border);
+}
+nav.toc .inner{
+  max-width:860px; margin:0 auto; padding:0 24px;
+  display:flex; gap:4px; overflow-x:auto;
+  font-family:"IBM Plex Sans",sans-serif;
+}
+nav.toc a{
+  flex:none;
+  font-size:13.5px; font-weight:500; color:var(--text-muted);
+  text-decoration:none; padding:13px 12px; border-bottom:2px solid transparent;
+  white-space:nowrap;
+}
+nav.toc a:hover{ color:var(--text); }
+nav.toc a:focus-visible{ outline:2px solid var(--accent); outline-offset:-2px; }
+
+/* ---------- sections ---------- */
+section{ padding-top:56px; scroll-margin-top:52px; }
+.section-head{ margin-bottom:22px; }
+.section-num{
+  font-family:"IBM Plex Mono",monospace; font-size:13px; color:var(--accent);
+  font-weight:600; letter-spacing:.04em;
+}
+h2.section-title{ font-size:27px; margin:4px 0 10px; color:var(--text); }
+.section-dek{ color:var(--text-muted); font-size:16px; max-width:64ch; }
+
+p{ margin:0 0 16px; color:var(--text); }
+p.muted{ color:var(--text-muted); }
+a{ color:var(--accent-ink); }
+
+/* ---------- schema diagram ---------- */
+.schema-card{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  padding:22px; box-shadow:var(--shadow); margin-bottom:18px; overflow-x:auto;
+}
+.schema-card svg{ display:block; min-width:640px; width:100%; height:auto; }
+.schema-legend{
+  display:flex; gap:18px; flex-wrap:wrap; margin-top:14px;
+  font-family:"IBM Plex Sans",sans-serif; font-size:13px; color:var(--text-muted);
+}
+.schema-legend span.k{ color:var(--text); font-weight:600; font-family:"IBM Plex Mono",monospace; }
+
+table.filetable{ width:100%; border-collapse:collapse; font-family:"IBM Plex Sans",sans-serif; font-size:14px; }
+table.filetable th{
+  text-align:left; font-size:11.5px; text-transform:uppercase; letter-spacing:.06em;
+  color:var(--text-muted); font-weight:600; padding:0 10px 8px; border-bottom:1px solid var(--border);
+}
+table.filetable td{ padding:10px 10px; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text); }
+table.filetable tr:last-child td{ border-bottom:none; }
+table.filetable code{ font-size:12.5px; background:var(--surface-2); padding:1px 5px; border-radius:4px; }
+
+/* ---------- step cards ---------- */
+.step{
+  background:var(--surface); border:1px solid var(--border); border-radius:14px;
+  box-shadow:var(--shadow); margin-bottom:20px; overflow:hidden;
+}
+.step-head{
+  display:flex; align-items:baseline; gap:12px;
+  padding:18px 22px 4px;
+  font-family:"IBM Plex Sans",sans-serif;
+}
+.step-tag{
+  font-size:12px; font-weight:700; color:var(--accent); background:var(--accent-wash);
+  border-radius:6px; padding:3px 8px; letter-spacing:.03em;
+}
+.step-title{ font-size:17.5px; font-weight:600; color:var(--text); margin:0; }
+.step-body{ padding:6px 22px 20px; }
+.step-body p{ font-size:15.5px; }
+.problem{
+  font-size:14.5px; color:var(--text-muted); margin:6px 0 16px;
+  padding-left:14px; border-left:3px solid var(--red);
+}
+.problem b{ color:var(--text); font-weight:600;}
+
+pre.code-block{
+  background:var(--code-bg); color:var(--code-text);
+  border:1px solid var(--code-border); border-radius:10px;
+  padding:16px 18px; overflow-x:auto; margin:0 0 16px;
+  font-size:13.3px; line-height:1.6;
+}
+pre.code-block code{ font-family:"IBM Plex Mono",monospace; background:none; }
+.hljs-comment{ color:#8792b0; font-style:italic; }
+.hljs-string{ color:#9fd98c; }
+.hljs-number{ color:#e8b05a; }
+.hljs-keyword,.hljs-built_in{ color:#7ea8ff; }
+.hljs-title.function_{ color:#c9a6ff; }
+.hljs-params{ color:#dfe6f7; }
+.hljs-attr{ color:#79c7e3; }
+
+.result-row{
+  display:flex; flex-wrap:wrap; gap:10px; margin:0 0 16px;
+  font-family:"IBM Plex Mono",monospace;
+}
+.result-chip{
+  background:var(--surface-2); border:1px solid var(--border); border-radius:8px;
+  padding:8px 12px; font-size:13px; color:var(--text);
+}
+.result-chip b{ font-size:15px; display:block; font-variant-numeric:tabular-nums; margin-bottom:1px;}
+.result-chip small{ font-family:"IBM Plex Sans",sans-serif; color:var(--text-muted); font-size:11px; }
+
+.why{
+  background:var(--amber-wash); border:1px solid color-mix(in srgb, var(--amber) 35%, var(--border));
+  border-radius:10px; padding:13px 16px; display:flex; gap:10px;
+  font-size:14.5px;
+}
+.why .label{
+  font-family:"IBM Plex Sans",sans-serif; font-weight:700; font-size:11.5px;
+  text-transform:uppercase; letter-spacing:.05em; color:var(--amber-ink); flex:none;
+  padding-top:1px;
+}
+.why p{ margin:0; color:var(--text); font-size:14.5px; }
+
+.insight{
+  background:var(--green-wash); border:1px solid color-mix(in srgb, var(--green) 35%, var(--border));
+  border-radius:10px; padding:14px 16px; margin-top:4px;
+}
+.insight .label{
+  font-family:"IBM Plex Sans",sans-serif; font-weight:700; font-size:11.5px;
+  text-transform:uppercase; letter-spacing:.05em; color:var(--green); margin-bottom:6px;
+}
+
+/* ---------- glossary ---------- */
+.glossary{ display:flex; flex-direction:column; border:1px solid var(--border); border-radius:14px; overflow:hidden; background:var(--surface); box-shadow:var(--shadow);}
+.glossary-row{ display:grid; grid-template-columns:200px 1fr; gap:16px; padding:14px 20px; border-bottom:1px solid var(--border); }
+.glossary-row:last-child{ border-bottom:none; }
+.glossary-row code{ font-family:"IBM Plex Mono",monospace; font-size:14px; color:var(--accent-ink); font-weight:600; align-self:start; }
+.glossary-row span{ font-family:"IBM Plex Sans",sans-serif; font-size:14.5px; color:var(--text-muted); }
+
+/* ---------- Q&A ---------- */
+details.qa{
+  background:var(--surface); border:1px solid var(--border); border-radius:12px;
+  padding:4px 18px; margin-bottom:10px; box-shadow:var(--shadow);
+}
+details.qa summary{
+  font-family:"IBM Plex Sans",sans-serif; font-weight:600; font-size:15.5px;
+  padding:14px 0; cursor:pointer; list-style:none; color:var(--text);
+  display:flex; justify-content:space-between; align-items:center; gap:12px;
+}
+details.qa summary::-webkit-details-marker{ display:none; }
+details.qa summary::after{
+  content:"+"; font-size:20px; color:var(--text-muted); flex:none; font-weight:400;
+  transition:transform .15s ease;
+}
+details.qa[open] summary::after{ content:"–"; }
+details.qa .a{ padding:0 0 16px; color:var(--text-muted); font-size:15px; max-width:64ch; }
+details.qa .a b{ color:var(--text); font-weight:600; }
+
+footer{
+  margin-top:70px; padding-top:22px; border-top:1px solid var(--border);
+  font-family:"IBM Plex Sans",sans-serif; font-size:12.5px; color:var(--text-muted);
+}
+
+@media (max-width:620px){
+  .glossary-row{ grid-template-columns:1fr; gap:4px; }
+}
+</style>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow"><span class="dot"></span>Študijný sprievodca · Dataset 046 · Rail APU</div>
+    <h1 class="title">Fáza 1 – APU dáta</h1>
+    <p class="lede">Ako presne kód v notebooku spracúva <code class="mono">readings.csv</code>, <code class="mono">units.csv</code> a <code class="mono">gateways.csv</code> — od prieskumnej analýzy (1.1), cez čistenie dát (1.2), až po overenie dvoch hypotéz (1.3) — krok za krokom, s dôvodom pri každom rozhodnutí, aby ste to vedeli obhájiť pred cvičiacim bez čítania kódu naživo.</p>
+    <div class="meta-row">
+      <span class="meta-pill">📁 <b>3</b> zdrojové súbory</span>
+      <span class="meta-pill"><b>14&nbsp;913</b> pôvodných meraní</span>
+      <span class="meta-pill">→ <b>14&nbsp;518</b> riadkov v <code class="mono" style="font-size:11.5px">df_clean</code></span>
+      <span class="meta-pill"><b>2</b> hypotézy, obe potvrdené</span>
+      <span class="meta-pill">Fáza 1 · <b>15/15b</b></span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc">
+  <div class="inner">
+    <a href="#prehlad">Prehľad dát</a>
+    <a href="#a1">1.1 A · Štruktúra</a>
+    <a href="#b1">1.1 B · Atribúty</a>
+    <a href="#c1">1.1 C · Párová analýza</a>
+    <a href="#d1">1.1 D · failure</a>
+    <a href="#e1">1.1 E · Zhrnutie</a>
+    <a href="#a">1.2 A · Problémy</a>
+    <a href="#b">1.2 B · Správnosť</a>
+    <a href="#c">1.2 C · Outliery</a>
+    <a href="#a3">1.3 A · Hypotézy</a>
+    <a href="#b3">1.3 B · Sila testov</a>
+    <a href="#slovnik">Slovník</a>
+    <a href="#otazky">Otázky cvičiaceho</a>
+  </div>
+</nav>
+
+<div class="wrap">
+
+<section id="prehlad">
+  <div class="section-head">
+    <div class="section-num">00</div>
+    <h2 class="section-title">Tri súbory, jeden cieľ</h2>
+    <p class="section-dek">Predtým než čokoľvek čistíme, treba vedieť, čo s čím súvisí. <code class="mono">readings</code> je časový rad meraní zo senzorov (tu je aj cieľová premenná <code class="mono">failure</code>), <code class="mono">units</code> je zoznam jednotiek s ich vlastnosťami, <code class="mono">gateways</code> sú komunikačné brány v depe.</p>
+  </div>
+
+  <div class="schema-card">
+    <svg viewBox="0 0 760 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Schéma vzťahov medzi readings, units a gateways">
+      <defs>
+        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--text-muted)"></path>
+        </marker>
+      </defs>
+      <!-- readings box -->
+      <rect x="10" y="30" width="210" height="130" rx="12" fill="var(--accent-wash)" stroke="var(--accent)" stroke-width="1.4"></rect>
+      <text x="30" y="60" font-family="IBM Plex Sans" font-size="14" font-weight="700" fill="var(--text)">readings.csv</text>
+      <text x="30" y="82" font-family="IBM Plex Mono" font-size="11.5" fill="var(--text-muted)">14 913 × 10</text>
+      <text x="30" y="102" font-family="IBM Plex Sans" font-size="12" fill="var(--text-muted)">senzory + cycle_ts</text>
+      <text x="30" y="120" font-family="IBM Plex Sans" font-size="12" fill="var(--text-muted)">+ cieľ: failure</text>
+      <text x="30" y="145" font-family="IBM Plex Mono" font-size="11.5" font-weight="600" fill="var(--accent-ink)">id_unit = "U00255"</text>
+
+      <!-- units box -->
+      <rect x="275" y="30" width="210" height="130" rx="12" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1.4"></rect>
+      <text x="295" y="60" font-family="IBM Plex Sans" font-size="14" font-weight="700" fill="var(--text)">units.csv</text>
+      <text x="295" y="82" font-family="IBM Plex Mono" font-size="11.5" fill="var(--text-muted)">2 000 × 7</text>
+      <text x="295" y="102" font-family="IBM Plex Sans" font-size="12" fill="var(--text-muted)">serviceHours,</text>
+      <text x="295" y="120" font-family="IBM Plex Sans" font-size="12" fill="var(--text-muted)">class_duty, fleetCode</text>
+      <text x="295" y="145" font-family="IBM Plex Mono" font-size="11.5" font-weight="600" fill="var(--accent-ink)">id_unit = 255</text>
+
+      <!-- gateways box -->
+      <rect x="540" y="30" width="210" height="130" rx="12" fill="var(--surface-2)" stroke="var(--border)" stroke-width="1.4"></rect>
+      <text x="560" y="60" font-family="IBM Plex Sans" font-size="14" font-weight="700" fill="var(--text)">gateways.csv</text>
+      <text x="560" y="82" font-family="IBM Plex Mono" font-size="11.5" fill="var(--text-muted)">16 000 × 11</text>
+      <text x="560" y="102" font-family="IBM Plex Sans" font-size="12" fill="var(--text-muted)">signal_dbm,</text>
+      <text x="560" y="120" font-family="IBM Plex Sans" font-size="12" fill="var(--text-muted)">install_date</text>
+      <text x="560" y="145" font-family="IBM Plex Mono" font-size="11.5" font-weight="600" fill="var(--accent-ink)">id_depot (N:1)</text>
+
+      <!-- arrow 1 -->
+      <line x1="220" y1="95" x2="273" y2="95" stroke="var(--text-muted)" stroke-width="1.6" marker-end="url(#arrow)"></line>
+      <text x="223" y="88" font-family="IBM Plex Sans" font-size="10.5" fill="var(--text-muted)">po zjednotení formátu</text>
+      <!-- arrow 2 -->
+      <line x1="485" y1="95" x2="538" y2="95" stroke="var(--text-muted)" stroke-width="1.6" marker-end="url(#arrow)"></line>
+      <text x="488" y="88" font-family="IBM Plex Sans" font-size="10.5" fill="var(--text-muted)">cez id_depot</text>
+
+      <text x="10" y="195" font-family="IBM Plex Sans" font-size="11.5" fill="var(--text-muted)">N:1 → N:1 — jedna jednotka má viac meraní, jedno depo má viac brán</text>
+    </svg>
+    <div class="schema-legend">
+      <div><span class="k">id_unit</span> spája readings ↔ units (formát sa líši, treba zjednotiť)</div>
+      <div><span class="k">id_depot</span> spája units ↔ gateways (gateways.id_unit je z 87,5&nbsp;% prázdny, nepoužiteľný)</div>
+    </div>
+  </div>
+</section>
+
+<section id="a1">
+  <div class="section-head">
+    <div class="section-num">1.1 A</div>
+    <h2 class="section-title">Analýza štruktúr dát</h2>
+    <p class="section-dek">Štruktúra súborov (tvar, typy, duplicity) a štruktúra vzťahov medzi nimi — presne tie dva problémy (formát <code class="mono">id_unit</code>, nepoužiteľné <code class="mono">id_unit</code> v gateways), ktoré sa neskôr riešia v 1.2 A, boli objavené už tu.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A1·1</span><h3 class="step-title">Tvar, typy a duplicity troch súborov</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python">for name, df in dataframes.items():
+    print(f"Počet záznamov: {df.shape[0]}, počet atribútov: {df.shape[1]}")
+    print(f"Duplicitné riadky: {df.duplicated().sum()}")
+    print(df.dtypes)</code></pre>
+      <div style="overflow-x:auto;">
+      <table class="filetable">
+        <tr><th>Súbor</th><th>Tvar</th><th>Duplicity</th><th>Dátové typy</th></tr>
+        <tr><td><code>readings.csv</code></td><td>14&nbsp;913 × 10</td><td>220</td><td>2 reťazcové (<code>id_unit</code>, <code>cycle_ts</code>), 7 číselné, 1 binárna (<code>failure</code>)</td></tr>
+        <tr><td><code>units.csv</code></td><td>2&nbsp;000 × 7</td><td>0</td><td><code>id_unit</code>/<code>id_depot</code> int, <code>serviceHours</code> float, 4 reťazcové kategórie</td></tr>
+        <tr><td><code>gateways.csv</code></td><td>16&nbsp;000 × 11</td><td>0</td><td><code>id_depot</code> int, <code>id_unit</code> <b>float</b> (NaN), <code>signal_dbm</code>/<code>Lat</code>/<code>Lon</code> float</td></tr>
+      </table>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p><code class="mono">gateways.id_unit</code> má typ <code class="mono">float</code> práve preto, že obsahuje chýbajúce hodnoty (NaN núti pandas povýšiť celočíselný stĺpec na desatinný) — prvý náznak toho, že tento stĺpec bude na spájanie nespoľahlivý, potvrdený číselne v A1·2.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A1·2</span><h3 class="step-title">Kľúče a kardinalita vzťahov</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Zistenie:</b> <code class="mono">readings.id_unit</code> je reťazec (<code class="mono">"U00255"</code>), <code class="mono">units.id_unit</code> je číslo (<code class="mono">255</code>) — priame spojenie by nenašlo zhodu. Navyše <code class="mono">gateways.id_unit</code> chýba v 87,5&nbsp;% riadkov.</p>
+<pre class="code-block"><code class="language-python">readings_unit_num = readings["id_unit"].str.extract(r"(\d+)").astype(int)[0]
+overlap = set(readings_unit_num) & set(units["id_unit"])
+print(f"Po zjednotení formátu: {len(overlap)} / {readings_unit_num.nunique()} id_unit sa prekrýva")
+
+print(readings.groupby("id_unit").size().mean())   # priemer záznamov na jednotku
+print(gateways.groupby("id_depot").size().mean())   # priemer brán na depo</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>1&nbsp;998 / 2&nbsp;115</b><small>id_unit sa prekrýva po zjednotení formátu</small></div>
+        <div class="result-chip"><b>7,05</b><small>priemer záznamov readings na 1 jednotku</small></div>
+        <div class="result-chip"><b>133,33</b><small>priemer brán na 1 depo</small></div>
+        <div class="result-chip"><b>87,5&nbsp;%</b><small>NULL v gateways.id_unit</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p><code class="mono">readings</code> je k <code class="mono">units</code> vo vzťahu <b>N:1</b> (časový rad meraní na jednu jednotku), <code class="mono">gateways</code> je N:1 k <b>depu</b>, nie k jednotke — preto je jediný spoľahlivý spájací kľúč pre gateways <code class="mono">id_depot</code>, agregovaný cez priemer/medián (uplatnené v 1.1 C aj 1.2 A·4). Zvyšných ~117 jednotiek z readings bez zhody (2&nbsp;115 − 1&nbsp;998) sú tie isté osirelé záznamy, ktoré sa v 1.2 A·4 napokon vyradia (140 meraní).</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="b1">
+  <div class="section-head">
+    <div class="section-num">1.1 B</div>
+    <h2 class="section-title">Analýza jednotlivých atribútov</h2>
+    <p class="section-dek">Osem číselných atribútov (7 senzorov + <code class="mono">serviceHours</code>) a štyri kategorické/binárne, analyzované na <b>surových, nespojených</b> súboroch — ešte pred akýmkoľvek čistením.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">B1·1</span><h3 class="step-title">Číselné atribúty — rozsahy a štatistiky</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Kontrola:</b> pre každý senzor je definovaný fyzikálne očakávaný rozsah (napr. tlak, teplota); počítame priemer, medián, rozptyl, min/max a koľko hodnôt tento rozsah prekračuje.</p>
+<pre class="code-block"><code class="language-python">expected_ranges = {
+    "currentMotor": (0, 20), "filterDp": (0, 60), "oilTemperature": (-20, 110),
+    "reservoir_pressure": (0, 12), "rms_vibration": (0, 15), "Flowmeter": (0, 100),
+    "dewpointDischarge": (-40, 40), "serviceHours": (0, 60000),
+}
+out_of_range = ((valid < lo) | (valid > hi)).sum()   # pre každý atribút</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>203</b><small>filterDp mimo [0, 60] (1,42 %)</small></div>
+        <div class="result-chip"><b>47</b><small>oilTemperature mimo [-20, 110] (0,32 %)</small></div>
+        <div class="result-chip"><b>11</b><small>currentMotor mimo [0, 20] (0,07 %)</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Tieto počty sú vyššie než zodpovedajúce čísla v 1.2&nbsp;B (napr. filterDp 203 vs. 196, oilTemperature 47 vs. 46) — rozdiel spôsobujú duplicitné riadky, ktoré 1.1 B ešte nerieši a 1.2 A·1 ich pred kontrolou správnosti odstráni. Vizualizované histogramami (s vyznačeným priemerom/mediánom/očakávaným rozsahom) a boxplotmi pre všetkých 8 atribútov.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">B1·2</span><h3 class="step-title">Kategorické a binárne atribúty — frekvenčné tabuľky</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python">categorical_attrs = {
+    "failure": readings["failure"], "class_duty": units["class_duty"],
+    "codeModel": units["codeModel"], "fleetCode": units["fleetCode"],
+}
+for name, s in categorical_attrs.items():
+    print(name, s.nunique(dropna=True), s.isna().sum())</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>2</b><small>failure — striktne binárna, 0 chýbajúcich</small></div>
+        <div class="result-chip"><b>20</b><small>class_duty — 20 zápisov namiesto 4 kategórií</small></div>
+        <div class="result-chip"><b>4</b><small>codeModel</small></div>
+        <div class="result-chip"><b>5</b><small>fleetCode</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>20 unikátnych hodnôt pre <code class="mono">class_duty</code> namiesto očakávaných 4 je presne ten problém, ktorý 1.2 A·3 rieši mapovacím slovníkom — v 1.1 ho len <i>identifikujeme</i>, neopravujeme. Žiadny zo štyroch kategorických atribútov nemá chýbajúce hodnoty.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="c1">
+  <div class="section-head">
+    <div class="section-num">1.1 C</div>
+    <h2 class="section-title">Párová analýza dát</h2>
+    <p class="section-dek">Najprv treba súbory spojiť do jednej tabuľky <code class="mono">eda</code> (readings + units + agregované gateways) — bez nej by sme nemohli porovnávať atribúty naprieč súbormi. Potom nasledujú korelácie a asociácie medzi dvojicami atribútov.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">C1·1</span><h3 class="step-title">Integrácia pre analýzu — tabuľka eda</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python">eda = readings_for_analysis.merge(
+    units_for_analysis, on="unit_num", how="left", validate="many_to_one", indicator=True
+)
+# left_only: 140 meraní bez zodpovedajúcej jednotky
+
+gateway_by_depot = gateways.groupby("id_depot", as_index=False).agg(
+    mean_signal_dbm=("signal_dbm", "mean"), median_signal_dbm=("signal_dbm", "median")
+)
+eda = eda.merge(gateway_by_depot, on="id_depot", how="left", validate="many_to_one")</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>14&nbsp;913 → 14&nbsp;913, 19</b><small>tvar eda (left join, nič sa nestratí)</small></div>
+        <div class="result-chip"><b>140</b><small>left_only — bez zhody v units</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p><code class="mono">how="left"</code> zámerne <i>neprichádza</i> o žiadny riadok z readings (na rozdiel od 1.2 A·4, kde sa osirelé merania už natrvalo vyradia) — v 1.1 C chceme vidieť problém, nie ho rovno opraviť.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">C1·2</span><h3 class="step-title">Korelácie numerických atribútov</h3></div>
+    <div class="step-body">
+      <p class="problem">Pearsonova aj Spearmanova korelačná matica nad 9 atribútmi (7 senzorov + <code class="mono">serviceHours</code> + <code class="mono">mean_signal_dbm</code>), vizualizovaná ako dvojica tepelných máp.</p>
+      <div class="result-row">
+        <div class="result-chip"><b>−0,051</b><small>currentMotor ↔ mean_signal_dbm (najsilnejšia dvojica)</small></div>
+        <div class="result-chip"><b>−0,020</b><small>reservoir_pressure ↔ mean_signal_dbm</small></div>
+        <div class="result-chip"><b>0,015</b><small>reservoir_pressure ↔ dewpointDischarge</small></div>
+      </div>
+      <div class="insight">
+        <div class="label">Čo si všimnúť</div>
+        <p>Aj najsilnejšia nájdená dvojica má |ρ| &lt; 0,06 — numerické atribúty sú medzi sebou prakticky <b>nezávislé</b>. To je dobrá správa pre neskoršie modelovanie: nehrozí výrazná multikolinearita.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">C1·3</span><h3 class="step-title">Asociácie kategorických atribútov — Cramérovo V</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python">def cramers_v(x, y):
+    table = pd.crosstab(x, y)
+    chi2 = chi2_contingency(table, correction=False)[0]
+    n = table.to_numpy().sum()
+    return np.sqrt(chi2 / (n * min(table.shape[0]-1, table.shape[1]-1)))</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>0,078</b><small>class_duty ↔ fleetCode (najsilnejšia dvojica)</small></div>
+        <div class="result-chip"><b>0,070</b><small>class_duty ↔ codeModel</small></div>
+        <div class="result-chip"><b>0,047</b><small>codeModel ↔ fleetCode</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Krížová tabuľka <code class="mono">class_duty × codeModel</code> ukazuje podiely modelov v rámci každej záťažovej kategórie rovnomerne rozptýlené okolo 0,19–0,33 — žiadny model nie je pre žiadnu kategóriu výrazne nadreprezentovaný, čo potvrdzuje nízke Cramérovo V číselne aj vizuálne (boxploty senzorov podľa <code class="mono">class_duty</code> v B1·2 doplňujúco ukazujú, ktoré senzory sa medzi kategóriami líšia).</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="d1">
+  <div class="section-head">
+    <div class="section-num">1.1 D</div>
+    <h2 class="section-title">Párová analýza: failure vs. ostatné</h2>
+    <p class="section-dek">Tu hľadáme, čo súvisí s <b>cieľovou premennou</b> — nie dvojice atribútov medzi sebou (to bolo 1.1 C), ale každý atribút <i>vs.</i> <code class="mono">failure</code>.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">D1·1</span><h3 class="step-title">Rozdiely priemerov podľa stavu failure</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python">group_stats = failure_num.groupby("failure")[failure_num_cols].agg(["mean", "median", "std"])
+mean_diff = failure_num.groupby("failure")[failure_num_cols].mean().diff().iloc[-1]</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>+3&nbsp;518,4</b><small>serviceHours (failure=1 − failure=0)</small></div>
+        <div class="result-chip"><b>+2,91</b><small>filterDp</small></div>
+        <div class="result-chip"><b>+0,83</b><small>dewpointDischarge</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Toto je ten istý rozdiel priemerov <code class="mono">serviceHours</code>, ktorý sa v 1.3 A formálne otestuje Welchovým t-testom — tu je len prieskumný náznak, v 1.3 A sa overí štatisticky.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">D1·2</span><h3 class="step-title">Korelácia s failure</h3></div>
+    <div class="step-body">
+      <div style="overflow-x:auto;">
+      <table class="filetable">
+        <tr><th>Atribút</th><th>Pearson</th><th>Spearman</th></tr>
+        <tr><td><code>serviceHours</code></td><td>0,129</td><td><b>0,121</b></td></tr>
+        <tr><td><code>filterDp</code></td><td>0,090</td><td>0,088</td></tr>
+        <tr><td><code>reservoir_pressure</code></td><td>−0,074</td><td>−0,075</td></tr>
+        <tr><td><code>dewpointDischarge</code></td><td>0,076</td><td>0,074</td></tr>
+        <tr><td><code>currentMotor</code></td><td>−0,061</td><td>−0,064</td></tr>
+        <tr><td><code>mean_signal_dbm</code></td><td>−0,001</td><td>0,002</td></tr>
+      </table>
+      </div>
+      <div class="insight">
+        <div class="label">Čo si všimnúť</div>
+        <p>Najsilnejšia korelácia s <code class="mono">failure</code> zo všetkých senzorov je len <b>ρ ≈ 0,12</b> (serviceHours) — žiadny jednotlivý numerický atribút problém nevyrieši sám, preto bude treba model, ktorý skombinuje viac slabých signálov naraz.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">D1·3</span><h3 class="step-title">Kategorické atribúty vs. failure</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python">rate = cat_vs_failure.groupby(col)["failure"].mean().mul(100)   # miera failure (%) podľa kategórie
+v = cramers_v(cat_vs_failure[col], cat_vs_failure["failure"])</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>0,156</b><small>class_duty ↔ failure — najsilnejšia zo všetkých</small></div>
+        <div class="result-chip"><b>19,2&nbsp;% vs. 6,3&nbsp;%</b><small>miera failure: light vs. heavy</small></div>
+        <div class="result-chip"><b>0,023 · 0,013</b><small>codeModel · fleetCode ↔ failure</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Cramérovo V = 0,156 je najvyššia nameraná súvislosť v celej Fáze 1 (silnejšia než ktorákoľvek numerická korelácia) — <code class="mono">class_duty</code> je preto najdôležitejší kategorický prediktor. Práve preto jeho zjednotenie z 20 zápisov na 4 kategórie (1.2 A·3) priamo zlepšuje kvalitu najsilnejšieho signálu v dátach.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="e1">
+  <div class="section-head">
+    <div class="section-num">1.1 E</div>
+    <h2 class="section-title">Prvotné zamyslenie k riešeniu zadania</h2>
+    <p class="section-dek">Tri otázky zo zadania, zhrnuté z výsledkov 1.1 C a 1.1 D.</p>
+  </div>
+
+  <div class="insight">
+    <div class="label">Sú niektoré atribúty medzi sebou závislé?</div>
+    <p>Prekvapivo skoro vôbec — najsilnejšia dvojica numerických atribútov mala |ρ| ≈ 0,05, najsilnejšia dvojica kategorických Cramérovo V ≈ 0,08 (obe v 1.1 C). Atribúty teda nesú skôr nezávislé, doplnkové informácie a nehrozí výrazná multikolinearita.</p>
+  </div>
+  <div class="insight" style="margin-top:14px;">
+    <div class="label">Od ktorých atribútov zrejme závisí failure?</div>
+    <p>Tri vystupujú nad priemer (1.1 D): <b>class_duty</b> (Cramérovo V ≈ 0,156, najsilnejšia súvislosť vôbec), <b>serviceHours</b> (ρ ≈ 0,12, jednotky so zlyhaním majú v priemere o ~3&nbsp;500 h vyššiu prevádzku) a <b>filterDp</b> (ρ ≈ 0,09). Ostatné atribúty majú so failure len minimálnu súvislosť.</p>
+  </div>
+  <div class="insight" style="margin-top:14px;">
+    <div class="label">Je potrebné kombinovať záznamy z viacerých súborov?</div>
+    <p>Áno — <code class="mono">failure</code> aj senzory sú len v readings, zatiaľ čo najrelevantnejšie prediktory (<code class="mono">serviceHours</code>, <code class="mono">class_duty</code>) sú len v units. Bez spojenia cez <code class="mono">id_unit</code> (po zjednotení formátu, 1.1 A) a <code class="mono">units → gateways</code> cez <code class="mono">id_depot</code> by analýza 1.1 D vôbec nebola možná.</p>
+  </div>
+</section>
+
+<section id="a">
+  <div class="section-head">
+    <div class="section-num">1.2 A</div>
+    <h2 class="section-title">Identifikácia a riešenie problémov</h2>
+    <p class="section-dek">Päť problémov, v poradí, v akom ich kód rieši. Každý krok pracuje nad výsledkom predošlého — <code class="mono">readings_clean</code> postupne vzniká a mení sa cez celú sekciu.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A·1</span><h3 class="step-title">Duplicitné záznamy</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Problém:</b> 220 úplne identických riadkov v <code class="mono">readings</code>. Po ich odstránení ešte 35 dvojíc so <i>zhodným</i> <code class="mono">id_unit</code> + <code class="mono">cycle_ts</code>, ale <i>rozdielnymi</i> nameranými hodnotami — fyzikálne nemožné, jedna jednotka nemôže mať v tom istom okamihu dve rôzne merania.</p>
+<pre class="code-block"><code class="language-python">readings_clean = readings.drop_duplicates().copy()
+
+# rovnaký kľúč, rozdielne hodnoty -> nevieme, ktoré meranie je správne,
+# preto senzory spriemerujeme a failure ponecháme ako max
+agg_dict = {c: "mean" for c in readings_clean.select_dtypes("number").columns if c != "failure"}
+agg_dict["failure"] = "max"
+readings_clean = readings_clean.groupby(["id_unit", "cycle_ts"], as_index=False).agg(agg_dict)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>14 913 → 14 693</b><small>po úplných duplicitách</small></div>
+        <div class="result-chip"><b>35 dvojíc</b><small>konfliktný kľúč</small></div>
+        <div class="result-chip"><b>→ 14 658</b><small>finálny počet riadkov</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Nepoužili sme <code class="mono">keep="first"</code> na konfliktné dvojice, lebo by sme náhodne zahodili jedno z dvoch rovnako "platných" meraní. Priemer je kompromis, ktorý neuprednostňuje ani jedno; <code class="mono">failure=max</code> zaručuje, že neprídeme o signál o poruche, ak ho aspoň jeden záznam zachytil.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A·2</span><h3 class="step-title">Nejednotný formát dátumov</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Problém:</b> <code class="mono">cycle_ts</code> aj <code class="mono">install_date</code> miešajú 4 formáty v tom istom stĺpci — napr. <code class="mono">"01 Apr 2023"</code>, <code class="mono">"2023-10-15"</code>, <code class="mono">"2023/04/10"</code>, <code class="mono">"02/23/2023, 19:48:00"</code>.</p>
+<pre class="code-block"><code class="language-python"># format="mixed" rozpozná rôzne formáty v jednom stĺpci a zjednotí ich
+readings_clean["cycle_ts"] = pd.to_datetime(
+    readings_clean["cycle_ts"], format="mixed", dayfirst=False
+)
+gateways_clean["install_date"] = pd.to_datetime(
+    gateways_clean["install_date"], format="mixed", dayfirst=False
+)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>datetime64</b><small>jednotný typ</small></div>
+        <div class="result-chip"><b>0</b><small>neparsovateľných hodnôt</small></div>
+        <div class="result-chip"><b>2023-01-01…2023-12-31</b><small>rozsah cycle_ts</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p><code class="mono">dayfirst=False</code> je dôležité pri formáte <code class="mono">MM/DD/YYYY</code> — keby sme ho zamenili za deň-prvý, dátumy ako <code class="mono">02/23/2023</code> by sa vôbec neparsovali (23. mesiac neexistuje), čo nám slúžilo ako kontrola, že sme formát uhádli správne.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A·3</span><h3 class="step-title">Nejednotné kategórie — class_duty</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Problém:</b> 20 rôznych zápisov pre iba 4 skutočné kategórie pracovného zaťaženia: <code class="mono">"light"</code>, <code class="mono">"L"</code>, <code class="mono">"1"</code> sú tá istá úroveň; niektoré majú aj medzeru navyše (<code class="mono">" light"</code>).</p>
+<pre class="code-block"><code class="language-python">class_duty_map = {
+    "light": "light", "l": "light", "1": "light",
+    "med": "medium", "medium": "medium", "2": "medium",
+    "heavy": "heavy", "h": "heavy", "3": "heavy",
+    "normal": "normal", "n": "normal",
+}
+units_clean["class_duty"] = (
+    units_clean["class_duty"].astype(str).str.strip().str.lower().map(class_duty_map)
+)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>20 → 4</b><small>kategórie</small></div>
+        <div class="result-chip"><b>light 758</b><small>heavy 542 · medium 361 · normal 339</small></div>
+        <div class="result-chip"><b>0</b><small>nezmapovaných</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p><code class="mono">.str.strip().str.lower()</code> ide pred mapovaním, aby <code class="mono">" H"</code> aj <code class="mono">"H"</code> dopadli na rovnaký kľúč slovníka — bez toho by zostalo nezmapovaných pár desiatok riadkov s medzerou navyše. Toto je presne ten atribút, ktorý mal v 1.1 D najsilnejšiu súvislosť s <code class="mono">failure</code> (Cramérovo V ≈ 0,156), takže zjednotenie priamo zlepšuje kvalitu najdôležitejšieho prediktora.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A·4</span><h3 class="step-title">Formát id_unit a integrácia súborov</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Problém:</b> v <code class="mono">readings</code> je <code class="mono">id_unit</code> reťazec (<code class="mono">"U00255"</code>), v <code class="mono">units</code>/<code class="mono">gateways</code> číslo (<code class="mono">255</code>) — spojenie by bez úpravy nenašlo žiadnu zhodu.</p>
+<pre class="code-block"><code class="language-python">readings_clean["id_unit"] = readings_clean["id_unit"].str.extract(r"(\d+)").astype(int)
+
+orphan_mask = ~readings_clean["id_unit"].isin(units_clean["id_unit"])
+readings_valid = readings_clean.loc[~orphan_mask].copy()   # 140 meraní bez jednotky vyradené
+
+gateway_by_depot = gateways_clean.groupby("id_depot", as_index=False).agg(
+    mean_signal_dbm=("signal_dbm", "mean"), median_signal_dbm=("signal_dbm", "median")
+)
+df_clean = (
+    readings_valid
+    .merge(units_clean, on="id_unit", how="left", validate="many_to_one")
+    .merge(gateway_by_depot, on="id_depot", how="left", validate="many_to_one")
+)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>140</b><small>osirelých meraní (117 id_unit) vyradených</small></div>
+        <div class="result-chip"><b>14 518 × 18</b><small>df_clean</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p><code class="mono">gateways</code> sa pripája agregovane na úroveň depa, nie jednotky — stĺpec <code class="mono">id_unit</code> v <code class="mono">gateways</code> chýba v 87,5&nbsp;% riadkov, takže je na join nepoužiteľný (zistené už v 1.1 A). <code class="mono">validate="many_to_one"</code> je poistka: ak by sa join kľúč nečakane zdvojil, kód spadne namiesto toho, aby ticho vytvoril duplicitné riadky.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A·5</span><h3 class="step-title">Štruktúra a chýbajúce hodnoty</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Problém:</b> readings je dlhý časový rad (~7 záznamov na jednotku), nie "1 riadok = 1 pozorovanie". A tri stĺpce majú chýbajúce hodnoty: <code class="mono">serviceHours</code>, <code class="mono">filterDp</code>, <code class="mono">rms_vibration</code>.</p>
+<pre class="code-block"><code class="language-python">missing = df_clean.isna().sum()
+missing = missing[missing > 0].sort_values(ascending=False)
+# serviceHours   712   (4.90 %)
+# filterDp       585   (4.03 %)
+# rms_vibration  528   (3.64 %)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>712</b><small>serviceHours (4,90 %)</small></div>
+        <div class="result-chip"><b>585</b><small>filterDp (4,03 %)</small></div>
+        <div class="result-chip"><b>528</b><small>rms_vibration (3,64 %)</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Vedome <b>neimputujeme teraz</b>. Keby sme chýbajúce hodnoty nahradili priemerom/mediánom cez celý dataset už tu, "unikla" by informácia z budúcej testovacej množiny do trénovacej (data leakage) — imputer sa smie fitnúť len na train. Preto chýbajúce hodnoty ostávajú ako <code class="mono">NaN</code> a imputácia sa rieši až vo Fáze 2.1 C cez <code class="mono">sklearn</code> transformer. Rovnako dlhý formát (viac riadkov na jednotku) sa mení na "1 riadok = 1 jednotka" až pri príprave pre ML (2.1 B) — tu by bolo predčasné rozhodnúť, ako presne agregovať.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="b">
+  <div class="section-head">
+    <div class="section-num">1.2 B</div>
+    <h2 class="section-title">Kontrola správnosti dát</h2>
+    <p class="section-dek">Tu rozlišujeme dve veci, ktoré sa dajú ľahko zameniť: <b>abnormálna hodnota</b> je dátová chyba (fyzikálne nemožná), <b>outlier</b> (1.2 C) je štatisticky extrémna, ale reálne možná hodnota.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">B·1</span><h3 class="step-title">Abnormálne hodnoty</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Problém:</b> <code class="mono">oilTemperature</code> obsahuje presne hodnotu <code class="mono">-999</code> (46×) — klasický senzorový chybový kód, nie teplota. Aj <code class="mono">currentMotor</code> a <code class="mono">filterDp</code> majú hodnoty mimo fyzikálne možného rozsahu z 1.1 B.</p>
+<pre class="code-block"><code class="language-python">for col, (lo, hi) in expected_ranges.items():
+    out_of_range = ~df_clean[col].between(lo, hi) & df_clean[col].notna()
+    df_clean.loc[out_of_range, col] = np.nan   # dátová chyba -> NaN, nie odstránenie riadku</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>46</b><small>oilTemperature = -999</small></div>
+        <div class="result-chip"><b>196</b><small>filterDp mimo [0, 60]</small></div>
+        <div class="result-chip"><b>11</b><small>currentMotor mimo [0, 20]</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Nahradzujeme hodnotu, nie celý riadok — ostatné senzory v tom istom zázname sú stále platné a škoda by bolo ich zahodiť kvôli jednému pokazenému poľu. <code class="mono">-999</code> je typický "sentinel" kód, ktorý firmvér senzorov používa namiesto chýbajúcej hodnoty; keby sme ho nechali v dátach, skreslil by priemer/odchýlku oilTemperature výrazne nadol.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">B·2</span><h3 class="step-title">Nelogické dátové vzťahy</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>Kontrola:</b> záporné hodnoty tam, kde fyzikálne nemôžu byť; dátumy mimo obdobia zberu; <code class="mono">failure</code> mimo {0,1}.</p>
+<pre class="code-block"><code class="language-python">for col in ["currentMotor","filterDp","rms_vibration","Flowmeter","reservoir_pressure","serviceHours"]:
+    print(col, (df_clean[col] < 0).sum())       # 0 pre všetky
+
+print((df_clean["cycle_ts"].dt.year != 2023).sum())   # 0
+print(sorted(df_clean["failure"].unique()))            # [0, 1]</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>0</b><small>záporných hodnôt</small></div>
+        <div class="result-chip"><b>0</b><small>cycle_ts mimo 2023</small></div>
+        <div class="result-chip"><b>{0, 1}</b><small>failure, striktne binárna</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Konfliktné duplicity (rovnaký čas, iné hodnoty) sme riešili už v A·1 — to je tiež "nelogický vzťah", len sme ho objavili skôr. Zámerne sme <i>nevyhodnotili</i> ako problém to, že 1&nbsp;531 brán má <code class="mono">install_date</code> po roku 2023: inštalácia brány a zber meraní z jednotiek sú na sebe nezávislé procesy, takže to nie je chyba.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="c">
+  <div class="section-head">
+    <div class="section-num">1.2 C</div>
+    <h2 class="section-title">Vychýlené hodnoty — 2 techniky</h2>
+    <p class="section-dek">Obe bežia nad rovnakými 7 stĺpcami (<code class="mono">currentMotor, filterDp, oilTemperature, rms_vibration, Flowmeter, dewpointDischarge, serviceHours</code>), po tom, čo B·1 už odstránilo fyzikálne nemožné hodnoty.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">C·1</span><h3 class="step-title">IQR pravidlo (odstránenie)</h3></div>
+    <div class="step-body">
+      <p class="problem">Hranice <code class="mono">[Q1 − 1,5·IQR, Q3 + 1,5·IQR]</code> na každý stĺpec; riadok sa odstráni, ak je mimo hraníc v <i>čo i len jednom</i> z nich.</p>
+<pre class="code-block"><code class="language-python">row_is_outlier = pd.Series(False, index=df_clean.index)
+for col in outlier_cols:
+    q1, q3 = df_clean[col].quantile([0.25, 0.75])
+    iqr = q3 - q1
+    lo, hi = q1 - 1.5 * iqr, q3 + 1.5 * iqr
+    flag = ~df_clean[col].between(lo, hi) & df_clean[col].notna()
+    row_is_outlier |= flag
+
+df_iqr = df_clean.loc[~row_is_outlier].copy()   # 12 601 riadkov (z 14 518)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>1 917</b><small>riadkov zasiahnutých (13,2 %)</small></div>
+        <div class="result-chip"><b>→ 12 601</b><small>po odstránení</small></div>
+        <div class="result-chip"><b>688</b><small>najviac: serviceHours</small></div>
+      </div>
+      <div class="insight">
+        <div class="label">Čo si všimnúť</div>
+        <p>Keď sa pravidlo aplikuje na 7 stĺpcov naraz, zásahy sa <b>kumulujú</b> — preto 13,2&nbsp;% riadkov, hoci žiadny jednotlivý stĺpec sám o sebe nemá vychýlených viac než ~5&nbsp;%.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">C·2</span><h3 class="step-title">Winsorizing (orezanie 5. – 95. percentilu)</h3></div>
+    <div class="step-body">
+      <p class="problem">Namiesto zahodenia riadku sa extrémna hodnota orezie na hranicu rozdelenia — žiadny záznam sa nestratí.</p>
+<pre class="code-block"><code class="language-python">df_winsor = df_clean.copy()
+for col in outlier_cols:
+    lo, hi = df_clean[col].quantile([0.05, 0.95])
+    df_winsor[col] = df_winsor[col].clip(lower=lo, upper=hi)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>~10 %</b><small>hodnôt orezaných na stĺpec (5 + 5)</small></div>
+        <div class="result-chip"><b>14 518</b><small>riadkov — beze zmeny</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p><code class="mono">.clip()</code> je jeden riadok navyše oproti IQR vetve — rozdiel je filozofický, nie technický: <i>odstrániť pozorovanie</i> vs. <i>obmedziť hodnotu</i>.</p></div>
+    </div>
+  </div>
+
+  <div class="insight" style="margin-top:4px;">
+    <div class="label">Kľúčové zistenie tejto časti</div>
+    <p><code class="mono">failure=1</code> je už beztak menšinová trieda (12,1&nbsp;%). Po IQR odstránení klesne počet prípadov s poruchou z <b>1 755 na 1 401</b> — teda odstránenie vychýlených pozorovaní vymazalo <b>cca 20&nbsp;%</b> práve tej triedy, ktorú sa snažíme predikovať. To naznačuje, že extrémne hodnoty senzorov môžu byť reálne spojené so zlyhaním, nielen šum. Preto do ďalších fáz ako predvolenú voľbu berieme <b>winsorizing</b> — zachováva veľkosť dát aj zastúpenie minoritnej triedy; oba datasety (<code class="mono">df_iqr</code>, <code class="mono">df_winsor</code>) ostávajú k dispozícii na porovnanie.</p>
+  </div>
+</section>
+
+<section id="a3">
+  <div class="section-head">
+    <div class="section-num">1.3 A</div>
+    <h2 class="section-title">Formulácia a overenie dvoch hypotéz</h2>
+    <p class="section-dek">Obe hypotézy sú jednostranné, testované na hladine α = 0,05, nad <code class="mono">df_clean</code> z 1.2, a obe pracujú na úrovni <b>jednej jednotky</b> — nie jedného merania — aby sa opakované merania tej istej jednotky nepočítali ako nezávislé pozorovania.</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A3·1</span><h3 class="step-title">Hypotéza 1 — serviceHours a výskyt poruchy</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>H₁:</b> jednotky, pri ktorých bolo zaznamenané aspoň jedno <code class="mono">failure=1</code>, majú vyšší priemerný <code class="mono">serviceHours</code> než jednotky bez poruchy (μ₁ &gt; μ₀). <b>Test:</b> jednostranný Welchov t-test pre dva nezávislé výbery (bez predpokladu rovnakého rozptylu).</p>
+<pre class="code-block"><code class="language-python"># 1 riadok = 1 jednotka: medián serviceHours, failure = max cez všetky merania
+h1_units = df_clean.groupby("id_unit", as_index=False).agg(
+    serviceHours=("serviceHours", "median"), unit_failure=("failure", "max")
+).dropna(subset=["serviceHours", "unit_failure"])
+
+h1_result = stats.ttest_ind(h1_failure, h1_no_failure, equal_var=False, alternative="greater")</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>862 / 1&nbsp;037</b><small>jednotky bez / s poruchou</small></div>
+        <div class="result-chip"><b>12&nbsp;530 → 15&nbsp;797</b><small>priemer serviceHours (bez → s poruchou)</small></div>
+        <div class="result-chip"><b>t = 8,22</b><small>p ≈ 1,89 × 10⁻¹⁶</small></div>
+        <div class="result-chip"><b>d = 0,372</b><small>95&nbsp;% CI rozdielu: (2&nbsp;487, 4&nbsp;047)</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Agregácia na úroveň jednotky (medián <code class="mono">serviceHours</code>, <code class="mono">max</code> pre failure) rieši rovnaký problém ako v 1.2 A·1 — viacero meraní na jednu jednotku nie sú nezávislé pozorovania, takže by sa bez agregácie umelo nafúkla veľkosť vzorky a test by bol príliš optimistický (tzv. pseudoreplikácia).</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">A3·2</span><h3 class="step-title">Hypotéza 2 — filterDp pri poruche (párový test)</h3></div>
+    <div class="step-body">
+      <p class="problem"><b>H₁:</b> tá istá jednotka má v priemere vyšší <code class="mono">filterDp</code> pri meraniach s <code class="mono">failure=1</code> než pri <code class="mono">failure=0</code> (μD &gt; 0). <b>Test:</b> jednostranný párový t-test — každá jednotka je sama sebe kontrolou.</p>
+<pre class="code-block"><code class="language-python"># priemerny filterDp osobitne pre kazdy stav failure, len jednotky s obomi stavmi
+h2_pairs = df_clean.groupby(["id_unit","failure"])["filterDp"].mean().unstack("failure").dropna()
+h2_result = stats.ttest_rel(h2_pairs[1], h2_pairs[0], alternative="greater")</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>933</b><small>jednotky s meraniami v oboch stavoch</small></div>
+        <div class="result-chip"><b>23,10 → 26,12</b><small>priemerný filterDp (bez → s poruchou)</small></div>
+        <div class="result-chip"><b>t = 8,80</b><small>p ≈ 3,26 × 10⁻¹⁸</small></div>
+        <div class="result-chip"><b>dz = 0,288</b><small>95&nbsp;% CI rozdielu: (2,35, 3,70)</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Párový test namiesto nezávislého preto, lebo porovnávame <i>tú istú jednotku</i> v dvoch stavoch — to eliminuje vplyv rozdielov medzi jednotkami (napr. jedna jednotka môže mať celkovo vyšší/nižší filterDp nezávisle od poruchy) a sústredí sa len na rozdiel spôsobený stavom failure. Výsledok ukazuje súvislosť, nie príčinnosť — zvýšený filterDp nemusí poruchu spôsobovať ani ju predpovedať v predstihu.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="b3">
+  <div class="section-head">
+    <div class="section-num">1.3 B</div>
+    <h2 class="section-title">Overenie štatistickej sily testov</h2>
+    <p class="section-dek">Dve otázky: (1) obstoja obe hypotézy aj po korekcii na mnohonásobné testovanie? (2) majú testy dosť dát na to, aby reálny efekt spoľahlivo odhalili?</p>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">B3·1</span><h3 class="step-title">Holmova korekcia p-hodnôt</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python">reject_holm, p_values_holm, _, _ = multipletests(
+    [h1_result.pvalue, h2_result.pvalue], alpha=0.05, method="holm"
+)</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>1,89 × 10⁻¹⁶</b><small>H1 — p po Holmovej korekcii</small></div>
+        <div class="result-chip"><b>6,53 × 10⁻¹⁸</b><small>H2 — p po Holmovej korekcii</small></div>
+        <div class="result-chip"><b>obe zamietajú H₀</b><small>pri rodinnej hladine 0,05</small></div>
+      </div>
+      <div class="why"><span class="label">Ako vysvetliť</span><p>Testujeme dve hypotézy naraz, takže hrozí nafúkanie pravdepodobnosti falošne pozitívneho výsledku (chyba I. druhu). Holmova metóda je vždy aspoň tak silná ako Bonferroniho korekcia, ale menej konzervatívna — tu na výsledku nič nemení, lebo obe p-hodnoty sú rádovo nižšie než akákoľvek rozumná hranica.</p></div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head"><span class="step-tag">B3·2</span><h3 class="step-title">Odhad štatistickej sily (power analysis)</h3></div>
+    <div class="step-body">
+<pre class="code-block"><code class="language-python"># alpha_power = 0,025 - konzervatívna Bonferroniho hranica pre 2 hypotézy
+h1_power = TTestIndPower().power(effect_size=abs(h1_cohens_d), nobs1=h1_n1, alpha=0.025, ratio=h1_n0/h1_n1, alternative="larger")
+h2_power = TTestPower().power(effect_size=abs(h2_cohens_dz), nobs=h2_n, alpha=0.025, alternative="larger")</code></pre>
+      <div class="result-row">
+        <div class="result-chip"><b>1,000</b><small>sila H1 (serviceHours)</small></div>
+        <div class="result-chip"><b>1,000</b><small>sila H2 (filterDp)</small></div>
+        <div class="result-chip"><b>&gt; 0,80</b><small>prahová hodnota dostatočnej sily</small></div>
+      </div>
+      <div class="insight">
+        <div class="label">Obmedzenie, ktoré treba priznať</div>
+        <p>Sila 1,000 je dôsledkom veľkej vzorky (862–1&nbsp;037 jednotiek, 933 párov) kombinovanej s reálnym efektom — nie dôkaz toho, že H₁ je "viac pravdivá". Sila počítaná dodatočne z nameranej veľkosti efektu (<i>post-hoc power</i>) je len orientačná; pri nevýznamných výsledkoch by sa na ňu nemalo spoliehať ako na nezávislý dôkaz.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="slovnik">
+  <div class="section-head">
+    <div class="section-num">REF</div>
+    <h2 class="section-title">Slovník premenných</h2>
+    <p class="section-dek">Rýchla orientácia v tom, čo ktorá premenná v notebooku obsahuje — v poradí, ako postupne vznikajú.</p>
+  </div>
+  <div class="glossary">
+    <div class="glossary-row"><code>readings</code><span>pôvodný surový súbor, bez úprav — 14 913 riadkov</span></div>
+    <div class="glossary-row"><code>eda</code><span>readings + units + gateway_by_depot spojené cez left join (nič sa nevyraďuje) — pracovná tabuľka pre 1.1 C/D</span></div>
+    <div class="glossary-row"><code>readings_clean</code><span>readings bez duplicít, so zjednoteným cycle_ts a id_unit (int)</span></div>
+    <div class="glossary-row"><code>readings_valid</code><span>readings_clean bez 140 meraní s neexistujúcim id_unit</span></div>
+    <div class="glossary-row"><code>units_clean</code><span>units so zjednoteným class_duty (4 kategórie)</span></div>
+    <div class="glossary-row"><code>gateways_clean</code><span>gateways so zjednoteným install_date</span></div>
+    <div class="glossary-row"><code>gateway_by_depot</code><span>gateways agregované na úroveň id_depot (priemer/medián signálu)</span></div>
+    <div class="glossary-row"><code>df_clean</code><span>readings_valid + units_clean + gateway_by_depot, s NaN namiesto abnormálnych hodnôt — hlavný výstup 1.2 A/B, vstup pre 1.3</span></div>
+    <div class="glossary-row"><code>df_iqr</code><span>df_clean bez riadkov vychýlených podľa IQR pravidla (12 601 riadkov)</span></div>
+    <div class="glossary-row"><code>df_winsor</code><span>df_clean s hodnotami orezanými na 5./95. percentil (14 518 riadkov)</span></div>
+    <div class="glossary-row"><code>h1_units</code><span>df_clean agregovaný na 1 riadok = 1 jednotka (medián serviceHours, max failure) — pre Hypotézu 1</span></div>
+    <div class="glossary-row"><code>h2_pairs</code><span>priemerný filterDp na jednotku, osobitne pre failure=0/1 — len jednotky s oboma stavmi, pre Hypotézu 2</span></div>
+  </div>
+</section>
+
+<section id="otazky">
+  <div class="section-head">
+    <div class="section-num">Q&amp;A</div>
+    <h2 class="section-title">Otázky, ktoré môže dať cvičiaci</h2>
+    <p class="section-dek">Krátke odpovede, pripravené na obhajobu — klikni na otázku.</p>
+  </div>
+
+  <details class="qa">
+    <summary>Prečo ste konfliktné duplicity spriemerovali a nie jednoducho zahodili?</summary>
+    <div class="a">Zahodenie (napr. <b>keep="first"</b>) by bolo svojvoľné — oba záznamy majú rovnakú váhu dôveryhodnosti, nemáme dôvod jeden uprednostniť. Priemer je neutrálny kompromis a pri <b>failure</b> používame <b>max</b>, aby sme neprišli o informáciu o poruche, ak ju zachytil čo i len jeden z dvoch záznamov.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Prečo ste chýbajúce hodnoty neimputovali hneď v 1.2 A?</summary>
+    <div class="a">Pretože by sme imputovali na celom datasete naraz — vrátane dát, ktoré sa neskôr stanú testovacou množinou. Imputer (napr. priemer, medián) sa smie <b>fitnúť len na trénovacích dátach</b> (Fáza 2.1), inak dôjde k <b>data leakage</b>: model by nepriamo "videl" štatistiky z testu ešte pred vyhodnotením.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Ako ste rozlíšili abnormálnu hodnotu od outliera?</summary>
+    <div class="a"><b>Abnormálna hodnota</b> (1.2 B) prekračuje fyzikálne možný rozsah daný typom senzora (napr. teplota -999 °C neexistuje) — to je dátová/senzorová chyba. <b>Outlier</b> (1.2 C) je hodnota, ktorá je fyzikálne možná, len štatisticky vzdialená od zvyšku rozdelenia (napr. nezvyčajne vysoký, ale reálny tlak) — môže byť aj skutočný signál blížiacej sa poruchy.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Prečo preferujete winsorizing pred odstránením outlierov?</summary>
+    <div class="a">Pretože IQR odstránenie neúmerne zasiahlo minoritnú triedu <b>failure=1</b> — ubudlo jej cca 20&nbsp;%, výrazne viac než priemerný podiel zasiahnutých riadkov (13,2&nbsp;%). Pre predikčnú úlohu, kde je pozitívna trieda vzácna, je strata práve tejto triedy nákladnejšia než skreslenie spôsobené orezaním hodnoty na percentil.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Prečo sa 140 meraní (117 jednotiek) vyradilo namiesto toho, aby ostali v dátach?</summary>
+    <div class="a">Tieto merania odkazujú na <b>id_unit</b>, ktoré v <b>units.csv</b> neexistuje — takže by im chýbali práve najsilnejšie prediktory z 1.1 D (<b>serviceHours</b>, <b>class_duty</b>). Ponechať ich s chýbajúcimi hodnotami vo všetkých kľúčových stĺpcoch by pre strojové učenie neprinieslo žiadnu hodnotu navyše oproti ich vyradeniu.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Čo presne robí format="mixed" v pd.to_datetime?</summary>
+    <div class="a">Pre každú hodnotu v stĺpci samostatne skúša rozpoznať formát (namiesto toho, aby očakával jeden pevný formát pre celý stĺpec) — vhodné presne vtedy, keď stĺpec reálne obsahuje zmes formátov, ako tu. Je pomalšie než jeden pevný <b>format=</b> reťazec, ale pri ~15-tisíc riadkoch to nie je problém.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Prečo ste v 1.1 C/D a 1.3 agregovali merania na úroveň jednotky namiesto použitia všetkých riadkov readings priamo?</summary>
+    <div class="a">Pretože jedna jednotka má v priemere ~7 meraní (zistené v 1.1 A) a tieto merania nie sú nezávislé pozorovania — pochádzajú z tej istej fyzickej jednotky. Keby sme ich v štatistickom teste (1.3 A) počítali ako nezávislé riadky, umelo by sme nafúkli veľkosť vzorky a p-hodnoty by vyšli nereálne nízke (<b>pseudoreplikácia</b>). Agregácia na 1 riadok = 1 jednotka tomuto zabráni.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Prečo ste pri oboch hypotézach použili jednostranný test a nie obojstranný?</summary>
+    <div class="a">Smer efektu bol stanovený <b>vopred</b>, na základe doménovej úvahy (opotrebovanejšie jednotky a vyššia tlaková strata na filtri by mali súvisieť s vyššou mierou poruchy, nie nižšou) — to je presne to, čo testujú nulová/alternatívna hypotéza (μ₁ ≤ μ₀ vs. μ₁ &gt; μ₀). Jednostranný test je v tomto prípade korektný a má o niečo vyššiu silu než obojstranný pri rovnakej vzorke.</div>
+  </details>
+
+  <details class="qa">
+    <summary>Čo znamená odhadnutá štatistická sila 1,000 — nie je to podozrivé?</summary>
+    <div class="a">Nie, je to očakávaný dôsledok veľkej vzorky (862–1 037 jednotiek, resp. 933 párov) kombinovanej s reálnym, štatisticky významným efektom (Cohenovo d ≈ 0,37, dz ≈ 0,29). Sila 1,000 hovorí len to, že pri takejto vzorke a veľkosti efektu by test takmer vždy odhalil efekt, ak existuje — nie je to dôkaz správnosti hypotézy, len potvrdenie, že vzorka bola dostatočne veľká (1.3 B).</div>
+  </details>
+</section>
+
+<footer>
+  Pripravené k notebooku <code class="mono">IAU-project.ipynb</code> — Fáza 1 (1.1 EDA, 1.2 čistenie, 1.3 hypotézy), Dataset 046 (Rail APU Predictive Maintenance). Číselné hodnoty pochádzajú z reálneho behu notebooku.
+</footer>
+
+</div>
+
+<script>
+hljs.highlightAll();
+</script>
