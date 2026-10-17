@@ -13508,10 +13508,9 @@ vysledok: zamietame h0 (alfa = 0.05)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Silu testov vypočítame pomocou <code>statsmodels.stats.power</code> - rovnako ako na cvičení (<code>week-04/IAU_01_EDA-statistical-analysis.ipynb</code>, <code>week-04/IAU_02_EDA-statistical-power.ipynb</code>). Pre H1 (nezávislé výbery) použijeme <code>tt_ind_solve_power</code> s Cohenovým d a pomerom veľkostí skupín (<code>ratio</code>), presne ako v príkladoch z cvičenia. Pre H2 (párový test) priamy ekvivalent na cvičení nie je - použijeme <code>TTestPower</code>, čo je jednovýberový/párový náprotivok tej istej knižnice <code>statsmodels.stats.power</code>, aplikovaný na párové rozdiely a Cohenovo dz.</p>
-<p>Mann-Whitneyho a Wilcoxonov test uvádzame ako kontroly robustnosti, ich štatistickú silu tu samostatne nepočítame.</p>
-<p><strong>Obmedzenie:</strong> sila vypočítaná z pozorovaného efektu je iba orientačná a pri významnom výsledku býva vysoká. Preto uvádzame aj <strong>minimálny detekovateľný efekt</strong> pri cieľovej sile 0.80. Výsledky hovoria o schopnosti zachytiť efekty približne takej veľkosti za použitých predpokladov, nie o tom, že v dátach určite nie je nedostatok informácií pre iné, menšie efekty alebo pre všetky budúce situácie.</p>
-<p>Pri dvoch vopred formulovaných hypotézach neuvádzame samostatnú korekciu na viacnásobné testovanie, obe p-hodnoty sú podľa doterajších výsledkov výrazne pod konzervatívnou Bonferroniho hranicou a/2 = 0.025.</p>
+<p>Silu testov vypočítame cez <code>statsmodels.stats.power</code>, rovnako ako na cvičení (<code>week-04/IAU_01_EDA-statistical-analysis.ipynb</code>, <code>week-04/IAU_02_EDA-statistical-power.ipynb</code>). H1 (nezávislé výbery): <code>tt_ind_solve_power</code> s Cohenovým d a pomerom veľkostí skupín. H2 (párový test): priamy ekvivalent na cvičení nie je, použijeme <code>TTestPower</code> (rovnaká knižnica, aplikovaná na párové rozdiely a Cohenovo dz). Mann-Whitney a Wilcoxon sú len kontroly robustnosti, ich silu nepočítame.</p>
+<p><strong>Obmedzenie:</strong> sila z pozorovaného efektu je orientačná, preto uvádzame aj minimálny detekovateľný efekt pri sile 0.80 - vysoká sila tu neznamená, že by sme vždy zachytili aj menšie efekty.</p>
+<p>Korekciu na viacnásobné testovanie neuvádzame, obe p-hodnoty sú výrazne pod konzervatívnou Bonferroniho hranicou a/2 = 0.025.</p>
 </div>
 </div>
 </div>
