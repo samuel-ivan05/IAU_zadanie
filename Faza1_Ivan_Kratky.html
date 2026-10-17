@@ -10827,13 +10827,14 @@ fleetCode: 0.013
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>Sú niektoré atribúty medzi sebou závislé?</strong></p>
-<p>V 1.1 C sme porovnali Spearmanove korelácie numerických atribútov a Cramérovo V medzi kategorickými atribútmi. Najsilnejšia zobrazená dvojica numerických atribútov mala Spearmanovu koreláciu rho približne -0,05 (<code>currentMotor</code> vs. <code>mean_signal_dbm</code>), čo naznačuje veľmi slabú (prakticky zanedbateľnú) monotónnu závislosť v analyzovaných dvojiciach. <strong>Korelácia blízka nule však sama osebe nedokazuje nezávislosť</strong> a tieto výsledky nevylučujú nelineárne či viacpremenné vzťahy. Po zjednotení zápisov <code>class_duty</code> treba pri kategóriách interpretovať už aktualizovanú Cramérovu maticu a krížovú tabuľku. Na základe zobrazených párových výsledkov nevidíme výrazné párové korelácie, nie je však správne vyhlásiť všetky atribúty za nezávislé.</p>
+<p>V 1.1 C sme porovnali Spearmanove korelácie numerických atribútov a Cramérovo V medzi kategorickými atribútmi. Najsilnejšia zobrazená dvojica numerických atribútov mala Spearmanovu koreláciu rho približne -0,05 (<code>currentMotor</code> vs. <code>mean_signal_dbm</code>), čo naznačuje veľmi slabú (prakticky zanedbateľnú) monotónnu závislosť v analyzovaných dvojiciach. <strong>Korelácia blízka nule však sama osebe nedokazuje nezávislosť</strong> a tieto výsledky nevylučujú nelineárne či viacpremenné vzťahy. Kategórie <code>class_duty</code> sme zjednotili na <code>light</code>, <code>medium</code> a <code>heavy</code>; výsledky Cramérovej matice preto interpretujeme až po tomto zjednotení. Na základe zobrazených párových výsledkov nevidíme výrazné párové korelácie, nie je však správne vyhlásiť všetky atribúty za nezávislé.</p>
 <p><strong>Od ktorých atribútov zrejme závisí <code>failure</code>?</strong></p>
-<p>V 1.1 D porovnávame distribúcie pri jednotlivých meraniach (<code>failure = 0</code> a <code>failure = 1</code>). Z numerických atribútov najviac vystupujú <code>serviceHours</code> a <code>filterDp</code>, <code>class_duty</code> je významný kandidát na ďalšie preskúmanie a jeho miera <code>failure</code> sa teraz počíta po zjednotení zápisov na <code>light</code>, <code>medium</code> a <code>heavy</code>. Presné miery a Cramérovo V treba čítať z aktualizovaných výstupov buniek 1.1 D, ktoré je potrebné znovu spustiť.</p>
+<p>V 1.1 D porovnávame distribúcie pri jednotlivých meraniach (<code>failure = 0</code> a <code>failure = 1</code>). Z numerických atribútov najviac vystupujú <code>serviceHours</code> a <code>filterDp</code>. Po zjednotení zápisov <code>class_duty</code> je miera <code>failure</code> najvyššia v kategórii <code>light</code> (18,26%), nasleduje <code>medium</code> (9,40%) a <code>heavy</code> (6,60%). Cramérovo V medzi <code>class_duty</code> a <code>failure</code> je 0,154. Pri <code>codeModel</code> (V = 0,023) a <code>fleetCode</code> (V = 0,013) je asociácia podstatne slabšia. Ide o asociácie, nie dôkaz príčinnej súvislosti.</p>
 <p>Rozdiel <code>serviceHours</code> približne 3 518 hodín v deskriptívnej analýze 1.1 D je počítaný na úrovni meraní, takže jednotky s viacerými meraniami majú väčšiu váhu. V hypotéze H1 v časti 1.3 najprv sumarizujeme dáta na jeden záznam na jednotku, preto tam rozdiel priemerov vychádza približne 3 267 hodín. Ide o dve odlišné úrovne analýzy, nie nevyhnutne o rozpor.</p>
 <p>Ostatné senzory a kategórie majú v párových výstupoch slabšie vzťahy s <code>failure</code>. Ide však o prieskumné porovnania, nie o dôkaz, že dané atribúty nemajú predikčnú hodnotu v kombinácii s inými premennými. Pri modelovaní bude vhodné porovnať prínos viacerých atribútov spoločne.</p>
 <p><strong>Je potrebné kombinovať záznamy z viacerých súborov a ako?</strong></p>
 <p>Áno. Cieľová premenná <code>failure</code> a senzorové merania sú v <code>readings.csv</code>, zatiaľ čo <code>serviceHours</code>, <code>class_duty</code>, <code>codeModel</code> a <code>fleetCode</code> sú v <code>units.csv</code>. Integrácia prebieha cez <code>id_unit</code> po zjednotení formátu (<code>"U00255"</code> vs. <code>255</code>) a vzťah je N:1 (viac meraní na jednu jednotku). Údaje <code>gateways.csv</code> sa v tejto fáze agregujú na úroveň <code>id_depot</code> (napr. priemerný <code>signal_dbm</code>) a pripájajú cez depo. Hoci <code>gateways.id_unit</code> pokrýva vlastnú bránu každej jednotky, tento vzťah zatiaľ nie je použitý pre hlavnú integráciu, jeho ďalšie využitie treba rozhodnúť v ďalších fázach.</p>
+<p><strong>Časové obmedzenie:</strong> merania <code>readings</code> pokrývajú rok 2023, ale 1 531 z 16 000 brán má <code>install_date</code> po 31. 12. 2023. Agregovaný <code>mean_signal_dbm</code> na úrovni depa preto môže zahŕňať aj brány, ktoré v čase historického merania ešte neboli nainštalované. V tejto fáze to evidujeme ako obmedzenie; pred použitím tohto atribútu v prediktívnom modeli bude potrebné overiť, či sú informácie dostupné k času predikcie, aby nevznikol únik informácií z budúcnosti.</p>
 </div>
 </div>
 </div>
@@ -11874,57 +11875,16 @@ Integrovana a vycistena datova sada df_clean: 14456 riadkov, 18 stlpcov
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <p><strong>Zhrnutie identifikovaných a vyriešených problémov (1.2 A):</strong></p>
-<table>
-<thead>
-<tr>
-<th>Problém</th>
-<th>Zistenie</th>
-<th>Riešenie</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Duplicitné záznamy</td>
-<td>220 úplne duplicitných riadkov. po ich odstránení 35 dvojíc s rovnakým pôvodným <code>(id_unit, cycle_ts)</code> s rozdielnymi záznamami a po normalizácii ID/dátumu ďalších 62 duplicitných kľúčov</td>
-<td>Úplné duplicity odstránené, numerické hodnoty zlučujeme priemerom a <code>failure</code> pravidlom <code>max</code>. Počty skupín s rozdielnymi štítkami <code>failure</code> sa osobitne kontrolujú pred oboma agregáciami vo výstupoch buniek 1.2 A. <code>failure=max</code> je konzervatívna voľba, ktorá môže zvýšiť počet pozitívnych prípadov, ak sa konflikt štítkov vyskytuje.</td>
-</tr>
-<tr>
-<td>Nejednotný formát dátumov</td>
-<td><code>cycle_ts</code> a <code>install_date</code> obsahujú 4 rôzne formáty zápisu dátumu/času</td>
-<td>Zjednotené na <code>datetime64</code> pomocou <code>pd.to_datetime(..., format="mixed")</code></td>
-</tr>
-<tr>
-<td>Nejednotný formát kategórií</td>
-<td><code>class_duty</code> má 20 rôznych zápisov (skratky, čísla, medzery navyše) pre 3 skutočné úrovne</td>
-<td>Zjednotené na <code>{light, medium, heavy}</code> (<code>normal</code>/<code>N</code> a <code>med</code>/<code>2</code> = stredná úroveň)</td>
-</tr>
-<tr>
-<td>Nejednotný formát kľúča <code>id_unit</code></td>
-<td>V <code>readings</code> reťazec (<code>"U00255"</code>), v <code>units</code>/<code>gateways</code> číslo (<code>255</code>)</td>
-<td>Zjednotené na číselný typ pred spojením</td>
-</tr>
-<tr>
-<td>Nevhodná štruktúra (integrácia)</td>
-<td><code>failure</code> a senzory sú v <code>readings</code>, najsilnejšie prediktory (<code>serviceHours</code>, <code>class_duty</code>) v <code>units</code></td>
-<td>Spojené cez <code>id_unit</code>, brány agregované na úroveň <code>id_depot</code> a pripojené k jednotkám (→ <code>df_clean</code>)</td>
-</tr>
-<tr>
-<td>Nezhodujúce sa <code>id_unit</code></td>
-<td>Časť meraní odkazuje na <code>id_unit</code>, ktoré v <code>units</code> neexistuje (~117 unikátnych jednotiek, pozri 1.1 A)</td>
-<td>Vyradené z <code>df_clean</code> (chýbajú kľúčové prediktory)</td>
-</tr>
-<tr>
-<td>Chýbajúce hodnoty</td>
-<td><code>filterDp</code>, <code>rms_vibration</code> (readings), <code>serviceHours</code> (units) chýbajú v rádovo jednotkách percent</td>
-<td>Ponechané ako <code>NaN</code>, finálna imputácia až vo Fáze 2 (fit len na trénovacej množine, aby sme sa vyhli data leakage)</td>
-</tr>
-<tr>
-<td>Dlhý časový rad</td>
-<td>Jedna jednotka = viac riadkov (~7 meraní), ale <code>failure</code> je zaznamenané pri každom meraní</td>
-<td>Ponechávame úroveň merania (1 riadok = 1 meranie), o splite train/test (podľa <code>id_unit</code>) sa rozhodne vo Fáze 2</td>
-</tr>
-</tbody>
-</table>
+<ul>
+<li><strong>Duplicitné záznamy:</strong> 220 úplne duplicitných riadkov; po ich odstránení ešte 35 dvojíc so zhodným pôvodným <code>(id_unit, cycle_ts)</code>, ale rozdielnymi hodnotami, a po normalizácii ID/dátumu ďalších 62 duplicitných kľúčov. Úplné duplicity sme odstránili, zvyšné konflikty zlučujeme - numerické hodnoty priemerom, <code>failure</code> pravidlom <code>max</code>. Počty skupín s rozdielnymi štítkami <code>failure</code> kontrolujeme osobitne pred oboma agregáciami (výstupy buniek 1.2 A); <code>failure=max</code> je naša pracovná/zjednodušujúca voľba, nie overená pravda - pri pôvodných kľúčoch takto zmenilo štítok z 0 na 1 8 riadkov, po normalizácii 11 riadkov.</li>
+<li><strong>Nejednotný formát dátumov:</strong> <code>cycle_ts</code> a <code>install_date</code> obsahujú 4 rôzne formáty zápisu dátumu/času. Zjednotili sme ich na <code>datetime64</code> pomocou <code>pd.to_datetime(..., format="mixed")</code>.</li>
+<li><strong>Nejednotný formát kategórií:</strong> <code>class_duty</code> má 20 rôznych zápisov (skratky, čísla, medzery navyše) pre iba 3 skutočné úrovne. Zjednotili sme ich na <code>{light, medium, heavy}</code> (<code>normal</code>/<code>N</code> a <code>med</code>/<code>2</code> zodpovedajú strednej úrovni).</li>
+<li><strong>Nejednotný formát kľúča <code>id_unit</code>:</strong> v <code>readings</code> je reťazec (napr. <code>"U00255"</code>), v <code>units</code>/<code>gateways</code> číslo (<code>255</code>). Pred spojením sme ho zjednotili na číselný typ.</li>
+<li><strong>Nevhodná štruktúra (integrácia):</strong> <code>failure</code> a senzory sú v <code>readings</code>, najsilnejšie prediktory (<code>serviceHours</code>, <code>class_duty</code>) v <code>units</code>. Tabuľky sme spojili cez <code>id_unit</code>, brány agregovali na úroveň <code>id_depot</code> a pripojili k jednotkám (výsledkom je <code>df_clean</code>).</li>
+<li><strong>Nezhodujúce sa <code>id_unit</code>:</strong> časť meraní odkazuje na <code>id_unit</code>, ktoré v <code>units</code> neexistuje (~117 unikátnych jednotiek, pozri 1.1 A). Tieto záznamy sme z <code>df_clean</code> vyradili, pretože im chýbajú kľúčové prediktory.</li>
+<li><strong>Chýbajúce hodnoty:</strong> <code>filterDp</code>, <code>rms_vibration</code> (v <code>readings</code>) a <code>serviceHours</code> (v <code>units</code>) chýbajú v rádovo jednotkách percent. Ponechali sme ich ako <code>NaN</code> - finálna imputácia prebehne až vo Fáze 2, fitovaná len na trénovacej množine, aby sme sa vyhli úniku informácie (data leakage).</li>
+<li><strong>Dlhý časový rad:</strong> jedna jednotka zodpovedá viacerým riadkom (~7 meraní), ale <code>failure</code> je zaznamenané pri každom meraní. Ponechávame úroveň merania (1 riadok = 1 meranie); o rozdelení train/test podľa <code>id_unit</code> rozhodneme vo Fáze 2.</li>
+</ul>
 </div>
 </div>
 </div>
@@ -12120,7 +12080,7 @@ Integrovana a vycistena datova sada df_clean: 14456 riadkov, 18 stlpcov
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=3367ac2d">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=090b882c">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -12335,7 +12295,7 @@ Po osetreni - pocet hodnot mimo rozsahu okrem filterDp (malo by byt 0):
 </div>
 </div>
 </div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=a22256a0">
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell" id="cell-id=61d5a2ea">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -12345,7 +12305,7 @@ Po osetreni - pocet hodnot mimo rozsahu okrem filterDp (malo by byt 0):
 </div>
 </div>
 </div>
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=1109e695">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell" id="cell-id=d38f8564">
 <div class="jp-Cell-inputWrapper" tabindex="0">
 <div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
 </div>
@@ -12747,10 +12707,10 @@ duplicitne id_gateway: 0
 <ul>
 <li><strong>Zjavný chybový kód:</strong> <code>oilTemperature = -999</code> sa vyskytuje opakovane a nie je vierohodnou teplotou, nahrádzame ho <code>NaN</code>.</li>
 <li><strong>Hodnoty mimo pracovných rozsahov:</strong> <code>currentMotor</code>, <code>filterDp</code> a <code>oilTemperature</code> majú aj ďalšie hodnoty mimo nami predbežne určených hraníc (rozsahy nie sú prevzaté z technickej špecifikácie, ide o skríningové predpoklady). <code>currentMotor</code> a <code>oilTemperature</code> mimo rozsahu nahrádzame <code>NaN</code> (chyba senzora/prenosu). <strong><code>filterDp</code> NEnahrádzame</strong> - mieru <code>failure</code> porovnávame vnútri a mimo rozsahu (diagnostika vyššie) a je viditeľne vyššia mimo rozsahu, preto hodnoty len označujeme stĺpcom <code>filterDp_suspicious</code> a ponechávame ich v dátach ako potenciálne informatívne.</li>
-<li><strong>Nelogické vzťahy:</strong> kontrolujeme konfliktné štítky pri duplicitách, nezáporné fyzikálne veličiny, obdobie <code>cycle_ts</code> a binárnosť <code>failure</code>. Po normalizácii kľúčov treba skontrolovať aj dodatočné duplicitné skupiny.</li>
+<li><strong>Nelogické vzťahy:</strong> skontrolovali sme konfliktné štítky pri duplicitách, nezáporné fyzikálne veličiny, obdobie <code>cycle_ts</code> a binárnosť <code>failure</code>. Po normalizácii kľúčov zostalo 62 duplicitných kľúčov na agregáciu; v 11 skupinách sa líšil aj <code>failure</code> a pravidlo <code>max</code> zmenilo 11 pôvodných nulových štítkov na pozitívny výsledok skupiny.</li>
 <li><strong>Dopad na chýbajúce hodnoty:</strong> pri aktuálnej politike skríningu pribúda <code>NaN</code> len v <code>oilTemperature</code> a <code>currentMotor</code> (<strong>nie</strong> vo <code>filterDp</code>, ten sa iba označuje). Presné porovnanie pred/po je v aktualizovanom prehľade chýbajúcich hodnôt vyššie. Imputáciu zatiaľ ponechávame na Fázu 2.</li>
-<li><strong>Atribúty brán (<code>gateways</code>):</strong> podľa kontrol nemajú chýbajúce hodnoty, duplicity <code>id_gateway</code> ani rozsahové problémy <code>signal_dbm</code>, <code>Lat</code>, <code>Lon</code>. Počet kategórií <code>Vendor</code> a <code>Technician</code> je vyšší než pri <code>modelHardware</code> a <code>firmware_version</code>, čo treba zohľadniť pri neskoršom výbere atribútov.</li>
-<li>Dátová sada <code>df_clean</code> je integrovaná a zbavená identifikovaných duplicít, hodnoty mimo predbežných hraníc sú podľa zvoleného pracovného pravidla nahradené <code>NaN</code>. Toto rozhodnutie treba považovať za predbežné, kým sa neoverí voči špecifikácii a diagnostike vzťahu k <code>failure</code>.</li>
+<li><strong>Atribúty brán (<code>gateways</code>):</strong> podľa kontrol nemajú chýbajúce hodnoty, duplicity <code>id_gateway</code> ani rozsahové problémy <code>signal_dbm</code>, <code>Lat</code>, <code>Lon</code>. Počet kategórií <code>Vendor</code> a <code>Technician</code> je vyšší než pri <code>modelHardware</code> a <code>firmware_version</code>, čo treba zohľadniť pri neskoršom výbere atribútov. Zároveň 1 531 z 16 000 brán má <code>install_date</code> po roku 2023, keď prebiehali merania <code>readings</code>; agregovaný signál podľa depa preto môže obsahovať informáciu z obdobia po meraniach a pred použitím ako prediktora treba overiť časovú dostupnosť.</li>
+<li>Dátová sada <code>df_clean</code> je integrovaná a zbavená identifikovaných duplicitných kľúčov. Hodnoty <code>currentMotor</code> a <code>oilTemperature</code> mimo predbežných hraníc sa nahrádzajú <code>NaN</code>, kým <code>filterDp</code> sa zachováva a označuje pomocným príznakom, pretože vyššia miera <code>failure</code> mimo rozsahu môže predstavovať užitočný signál. Rozsahy sú pracovné odhady, ktoré treba overiť voči technickej špecifikácii.</li>
 </ul>
 </div>
 </div>
@@ -12898,17 +12858,17 @@ Miera failure: povodne 0.1213 (1754 pripadov) -&gt; po IQR odstraneni 0.1100 (13
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
 <pre>currentMotor: hranice = (2.47, 8.32), nahradenych hodnot = 1446 (10.01 % platnych hodnot)
 filterDp: hranice = (11.72, 45.95), nahradenych hodnot = 1388 (10.00 % platnych hodnot)
-oilTemperature: hranice = (35.18, 74.61), nahradenych hodnot = 1442 (10.01 % platnych hodnot)
-rms_vibration: hranice = (1.20, 6.11), nahradenych hodnot = 1394 (10.01 % platnych hodnot)
-Flowmeter: hranice = (21.45, 34.58), nahradenych hodnot = 1446 (10.00 % platnych hodnot)
-dewpointDischarge: hranice = (2.24, 13.97), nahradenych hodnot = 1446 (10.00 % platnych hodnot)
 </pre>
 </div>
 </div>
 <div class="jp-OutputArea-child">
 <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
 <div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain" tabindex="0">
-<pre>serviceHours: hranice = (4561.00, 33601.70), nahradenych hodnot = 1372 (9.98 % platnych hodnot)
+<pre>oilTemperature: hranice = (35.18, 74.61), nahradenych hodnot = 1442 (10.01 % platnych hodnot)
+rms_vibration: hranice = (1.20, 6.11), nahradenych hodnot = 1394 (10.01 % platnych hodnot)
+Flowmeter: hranice = (21.45, 34.58), nahradenych hodnot = 1446 (10.00 % platnych hodnot)
+dewpointDischarge: hranice = (2.24, 13.97), nahradenych hodnot = 1446 (10.00 % platnych hodnot)
+serviceHours: hranice = (4561.00, 33601.70), nahradenych hodnot = 1372 (9.98 % platnych hodnot)
 
 df_winsor: 14456 riadkov (rovnako ako df_clean - ziadny zaznam sa neodstranil, iba sa orezali extremne hodnoty)
 </pre>
@@ -13085,10 +13045,10 @@ df_winsor: 14456 riadkov (rovnako ako df_clean - ziadny zaznam sa neodstranil, i
 <p><strong>Zhrnutie riešenia outlierov (1.2 C):</strong></p>
 <p>Vyskúšali sme dve techniky na siedmich číselných atribútoch (<code>currentMotor</code>, <code>filterDp</code>, <code>oilTemperature</code>, <code>rms_vibration</code>, <code>Flowmeter</code>, <code>dewpointDischarge</code>, <code>serviceHours</code>):</p>
 <ol>
-<li><strong>Odstránenie vychýlených pozorovaní (IQR, 1.5xIQR):</strong> pri spoločnom uplatnení na 7 atribútov sa záznamy kumulujú, odstránených je 1 906 z 14 456 riadkov (13.2%).</li>
+<li><strong>Odstránenie vychýlených pozorovaní (IQR, 1.5xIQR):</strong> pri spoločnom uplatnení na 7 atribútov sa záznamy kumulujú, odstránených je 2 030 z 14 456 riadkov (14,04 %).</li>
 <li><strong>Winsorizácia na 5. a 95. percentile:</strong> zachová všetky riadky, ale oreže približne 10% platných hodnôt v každom zo sledovaných atribútov. Nie je to neutrálna operácia a môže obmedziť aj reálne extrémne hodnoty.</li>
 </ol>
-<p><strong>Dôležité zistenie:</strong> <code>failure = 1</code> tvorí približne 12% meraní. Po IQR odstránení počet pozitívnych prípadov klesá z 1 754 na 1 402 (−20%), hoci riadkov ubudne 13.2%. To naznačuje, že odľahlé hodnoty môžu niesť informáciu o poruche. Nepreukazuje to však, že každý outlier je reálny ani že každý outlier treba zachovať.</p>
+<p><strong>Dôležité zistenie:</strong> <code>failure = 1</code> tvorí približne 12% meraní. Po IQR odstránení počet pozitívnych prípadov klesá z 1 754 na 1 367 (pokles o 387 prípadov, teda 22,1 %), hoci riadkov ubudne 14,04 %; podiel <code>failure = 1</code> medzi zostávajúcimi riadkami je približne 11,0 % oproti pôvodným 12,1 % . To naznačuje, že odľahlé hodnoty môžu niesť informáciu o poruche. Nepreukazuje to však, že každý outlier je reálny ani že každý outlier treba zachovať.</p>
 <p><strong>Predbežný záver:</strong> pre ďalšie fázy je rozumné neodstraňovať plošne celé riadky iba na základe IQR, pretože sa tým mení zastúpenie cieľovej triedy. <code>df_winsor</code> zostáva jednou z možností na porovnanie, nie definitívne rozhodnutie: winsorizácia na 5/95 mení veľa hodnôt a vhodnosť treba posúdiť na základe doménovej validity a neskoršieho výkonu modelu. V tejto fáze ešte nevyberáme finálnu pipeline.</p>
 </div>
 </div>
@@ -13658,8 +13618,9 @@ vysledok: zamietame h0 (alfa = 0.05)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Silu testov vypočítame cez <code>statsmodels.stats.power</code>, rovnako ako na cvičení (<code>week-04/IAU_01_EDA-statistical-analysis.ipynb</code>, <code>week-04/IAU_02_EDA-statistical-power.ipynb</code>). H1 (nezávislé výbery): <code>tt_ind_solve_power</code> s Cohenovým d a pomerom veľkostí skupín. H2 (párový test): priamy ekvivalent na cvičení nie je, použijeme <code>TTestPower</code> (rovnaká knižnica, aplikovaná na párové rozdiely a Cohenovo dz). Mann-Whitney a Wilcoxon sú len kontroly robustnosti, ich silu nepočítame.</p>
-<p><strong>Obmedzenie:</strong> sila z pozorovaného efektu je orientačná, preto uvádzame aj minimálny detekovateľný efekt pri sile 0.80 - vysoká sila tu neznamená, že by sme vždy zachytili aj menšie efekty.</p>
+<p>Silu testov vypočítame cez <code>statsmodels.stats.power</code>, rovnako ako na cvičení (<code>week-04/IAU_01_EDA-statistical-analysis.ipynb</code>, <code>week-04/IAU_02_EDA-statistical-power.ipynb</code>). H1 (nezávislé výbery): <code>tt_ind_solve_power</code> s Cohenovým d a pomerom veľkostí skupín. H2 (párový test): použijeme <code>TTestPower</code> aplikovaný na párové rozdiely a Cohenovo dz. Mann–Whitneyho a Wilcoxonov test sú len kontroly robustnosti, ich silu nepočítame.</p>
+<p><strong>Metodické obmedzenie H1:</strong> samotnú hypotézu testujeme Welchovým t-testom, ktorý nevyžaduje rovnaké rozptyly, zatiaľ čo <code>tt_ind_solve_power</code> je štandardná aproximácia pre klasický dvojvýberový t-test. Uvedená sila a minimálny detekovateľný efekt pre H1 sa preto interpretujú orientačne, nie ako presný výpočet sily Welchovho testu. Pre H2 je <code>TTestPower</code> jednovýberový ekvivalent aplikovaný na párové rozdiely, čo zodpovedá použitému párovému dizajnu.</p>
+<p><strong>Všeobecné obmedzenie:</strong> sila založená na pozorovanom efekte môže byť optimistická, preto uvádzame aj minimálny detekovateľný efekt pri sile 0,80. Vysoká vypočítaná sila neznamená, že by sme vždy zachytili aj menšie efekty alebo že sú dáta reprezentatívne.</p>
 <p>Korekciu na viacnásobné testovanie neuvádzame, obe p-hodnoty sú výrazne pod konzervatívnou Bonferroniho hranicou a/2 = 0.025.</p>
 </div>
 </div>
@@ -13810,9 +13771,9 @@ H2 - filterDp: sila 1.000 - dostatocna (&gt;= 0.80)
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p><strong>Interpretácia 1.3:</strong> Výsledky oboch testov poskytujú štatistický dôkaz proti príslušným nulovým hypotézam na hladine a = 0.05. Na úrovni APU jednotiek majú jednotky so zaznamenaným zlyhaním priemerne približne o 3 267 h vyššie <code>serviceHours</code> (95% IS približne 2 487–4 047 h, Welchov test p = 1.9x10^-16). V párovom porovnaní je <code>filterDp</code> pri meraniach s <code>failure = 1</code> priemerne vyšší približne o 4.06 (95% IS približne 3.24–4.87, p = 7.6x10^-22). Pozn.: od predošlej verzie sa toto číslo zmenilo, pretože <code>filterDp</code> mimo rozsahu už v 1.2 B nenahrádzame <code>NaN</code> - do priemeru teraz vstupujú aj extrémne hodnoty, ktoré sú častejšie pri <code>failure = 1</code>, čo rozdiel zväčšilo. Neparametrické kontrolné testy dávajú rovnaký smer záveru. Výsledky ukazujú asociáciu, nie príčinnosť.</p>
+<p><strong>Interpretácia 1.3:</strong> Výsledky oboch testov poskytujú štatistický dôkaz proti príslušným nulovým hypotézam na hladine a = 0.05. Na úrovni APU jednotiek majú jednotky so zaznamenaným zlyhaním priemerne približne o 3 267 h vyššie <code>serviceHours</code> (95% IS približne 2 487–4 047 h, Welchov test p = 1.9x10^-16). V párovom porovnaní je <code>filterDp</code> pri meraniach s <code>failure = 1</code> priemerne vyšší približne o 4.06 (95% IS približne 3.24–4.87, p = 7.6x10^-22). Rozdiel vychádza z finálnej politiky čistenia v 1.2 B, pri ktorej sa <code>filterDp</code> mimo predbežného rozsahu nenahrádza <code>NaN</code>, ale zachováva sa a označuje príznakom. Neparametrické kontrolné testy dávajú rovnaký smer záveru. Výsledky ukazujú asociáciu, nie príčinnosť.</p>
 <p>Veľkosti efektov sú skôr malé (Cohenovo d = 0.37, dz = 0.32), preto štatistická významnosť sama osebe neznamená, že jednotlivý atribút bude dobrým prediktorom. Deskriptívny rozdiel <code>serviceHours</code> v 1.1 D (~3 518 h) vychádza z meraní, kým H1 v 1.3 používa jeden súhrnný záznam na jednotku, obe čísla preto nemusia byť rovnaké.</p>
-<p><strong>Štatistická sila:</strong> vypočítaná pomocou <code>statsmodels.stats.power</code> (rovnako ako na cvičení) vychádza pri pozorovaných veľkostiach efektu veľmi vysoko (v tabuľke sa zaokrúhľuje na 1.00) a minimálny detekovateľný efekt je podstatne menší než pozorovaný efekt. Tento výsledok neznamená, že „nedostatok dát nehrozí“ vo všeobecnosti. Nevylučuje malé efekty, obmedzenia reprezentatívnosti dát ani potrebu ďalšieho overenia.</p>
+<p><strong>Štatistická sila:</strong> pri pozorovaných veľkostiach efektu vychádza veľmi vysoko (v tabuľke sa zaokrúhľuje na 1,00) a minimálny detekovateľný efekt je podstatne menší než pozorovaný efekt. Pre H1 ide o orientačnú aproximáciu, pretože výpočet <code>tt_ind_solve_power</code> predpokladá klasický dvojvýberový t-test, zatiaľ čo hypotézu testujeme Welchovým testom. Výsledok nevylučuje malé efekty ani obmedzenia reprezentatívnosti dát.</p>
 </div>
 </div>
 </div>
@@ -13827,11 +13788,12 @@ H2 - filterDp: sila 1.000 - dostatocna (&gt;= 0.80)
 <p>Nie priamo. Dáta sú v troch súboroch s rôznymi oddeľovačmi a formátmi kľúčov. <code>failure</code> a prediktory sú v rôznych súboroch a časť atribútov je textová. Po integrácii a prvotnom čistení vzniká <code>df_clean</code> (14 456 riadkov), kde jeden riadok predstavuje jedno meranie. Kategorické atribúty <code>class_duty</code>, <code>codeModel</code>, <code>fleetCode</code> a tiež <code>install_region</code> treba pred strojovým učením vyhodnotiť a podľa rozhodnutia zakódovať.</p>
 <p><strong>Aké problémy sa v dátach vyskytujú a ako ich riešime?</strong></p>
 <ul>
-<li>220 úplných duplicít. Po ich odstránení sa našli skupiny s rovnakým <code>(id_unit, cycle_ts)</code> a rozdielnymi záznamami, ďalšie duplicitné kľúče sa odhalili po normalizácii formátu ID a dátumu. Počty konfliktných hodnôt <code>failure</code> sa osobitne kontrolujú pred agregáciou. Pravidlo <code>failure = max</code> môže pri skutočnom konflikte štítkov zvýšiť počet pozitívnych prípadov a musí sa interpretovať spolu s výstupmi týchto kontrol.</li>
+<li>220 úplných duplicít. Po ich odstránení sa našli skupiny s rovnakým <code>(id_unit, cycle_ts)</code> a rozdielnymi záznamami, ďalšie duplicitné kľúče sa odhalili po normalizácii formátu ID a dátumu. Po normalizácii kľúčov sa zistilo 11 skupín s konfliktným <code>failure</code>; pravidlo <code>max</code> zmenilo 11 pôvodných riadkov s nulovým štítkom na pozitívny výsledný štítok skupiny. Pravidlo môže zvýšiť počet pozitívnych prípadov, preto tento konflikt uvádzame explicitne.</li>
 <li>Rôzne formáty dátumov a <code>id_unit</code> ako <code>"U00255"</code> vs. <code>255</code> sú normalizované pred integráciou.</li>
 <li>140 meraní (117 jednotiek) bez záznamu v <code>units</code> sa z integrovanej sady vyradilo, pretože im chýbajú kľúčové atribúty jednotky.</li>
 <li>Chýbajúce hodnoty zostávajú zatiaľ ako <code>NaN</code>, imputáciu treba robiť až v neskoršej fáze na základe tréningových dát.</li>
-<li>Ako outlier techniky sme vyskúšali IQR odstránenie (13.2% riadkov, pričom počet <code>failure = 1</code> klesol o 20%) a winsorizáciu 5/95 (riadky zachová, ale oreže približne 10% platných hodnôt z každého sledovaného atribútu). Winsorizácia je kandidát na porovnanie, nie finálne rozhodnutie.</li>
+<li>Pri <code>gateways</code> má 1 531 z 16 000 brán dátum inštalácie po 31. 12. 2023, hoci <code>readings</code> pokrýva rok 2023. Agregovaný <code>mean_signal_dbm</code> podľa depa môže preto zahŕňať informáciu z obdobia po meraní; pred použitím v prediktívnom modeli treba overiť časovú dostupnosť atribútu a zabrániť úniku informácií z budúcnosti.</li>
+<li>Ako outlier techniky sme vyskúšali IQR odstránenie (14,04 % riadkov, pričom počet <code>failure = 1</code> klesol z 1 754 na 1 367, teda o 22,1 %) a winsorizáciu 5/95 (riadky zachová, ale oreže približne 10% platných hodnôt z každého sledovaného atribútu). Winsorizácia je kandidát na porovnanie, nie finálne rozhodnutie.</li>
 </ul>
 <p><strong>Nadobúdajú niektoré atribúty nekonzistentné hodnoty?</strong></p>
 <p>Áno. <code>class_duty</code> má 20 pôvodných zápisov mapovaných na tri kategórie. <code>oilTemperature = -999</code> sa považuje za zjavný chybový kód. <code>currentMotor</code> až do 99 a <code>filterDp</code> až do 120 sú mimo pracovných, predbežne odhadnutých rozsahov. Tieto hranice nepochádzajú z potvrdenej špecifikácie, preto ide o pracovné čistenie, ktoré si vyžaduje overenie. Pred nahradením hodnôt mimo rozsahu <code>NaN</code> sa porovnáva aj ich miera <code>failure</code> s hodnotami v rozsahu; u <code>filterDp</code> to na základe tejto diagnostiky vedie k rozhodnutiu hodnoty nenahrádzať, len označiť (<code>filterDp_suspicious</code>), keďže môžu niesť informáciu o poruche.</p>
