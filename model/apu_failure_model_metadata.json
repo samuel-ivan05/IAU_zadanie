@@ -1,0 +1,153 @@
+{
+  "model_name": "LR + indikatory chybania (3.4 D)",
+  "created": "2026-11-20T18:13:16",
+  "task": "binarna klasifikacia failure (APU predictive maintenance), dataset 046",
+  "artifact": {
+    "file": "apu_failure_model.joblib",
+    "sha256": "b64debfbf932e8a9143fde5afe61ddf4478b4ffa7bb816efa27e9ca7ce51993c"
+  },
+  "environment": {
+    "python": "3.14.10",
+    "scikit_learn": "1.9.1",
+    "pandas": "3.0.6",
+    "numpy": "2.5.3"
+  },
+  "input_columns": [
+    "class_duty",
+    "filterDp",
+    "rms_vibration",
+    "serviceHours",
+    "currentMotor",
+    "oilTemperature",
+    "reservoir_pressure",
+    "Flowmeter",
+    "dewpointDischarge"
+  ],
+  "input_dtypes": {
+    "class_duty": "str",
+    "filterDp": "float64",
+    "rms_vibration": "float64",
+    "serviceHours": "float64",
+    "currentMotor": "float64",
+    "oilTemperature": "float64",
+    "reservoir_pressure": "float64",
+    "Flowmeter": "float64",
+    "dewpointDischarge": "float64"
+  },
+  "class_duty_levels": [
+    "light",
+    "medium",
+    "heavy"
+  ],
+  "cleaning_rules": {
+    "class_duty_map": {
+      "light": "light",
+      "l": "light",
+      "1": "light",
+      "normal": "medium",
+      "med": "medium",
+      "medium": "medium",
+      "n": "medium",
+      "2": "medium",
+      "heavy": "heavy",
+      "h": "heavy",
+      "3": "heavy"
+    },
+    "expected_ranges": {
+      "currentMotor": [
+        0.0,
+        20.0
+      ],
+      "filterDp": [
+        0.0,
+        60.0
+      ],
+      "oilTemperature": [
+        -20.0,
+        110.0
+      ],
+      "reservoir_pressure": [
+        0.0,
+        12.0
+      ],
+      "rms_vibration": [
+        0.0,
+        15.0
+      ],
+      "Flowmeter": [
+        0.0,
+        100.0
+      ],
+      "dewpointDischarge": [
+        -40.0,
+        40.0
+      ],
+      "serviceHours": [
+        0.0,
+        60000.0
+      ]
+    },
+    "function": "build_integrated_dataset (2.1 A)"
+  },
+  "preprocessing": "ColumnTransformer(transformers=[('categorical',\n                                 OrdinalEncoder(categories=[['light', 'medium',\n                                                             'heavy']]),\n                                 ['class_duty']),\n                                ('skewed',\n                                 Pipeline(steps=[('imputer',\n                                                  SimpleImputer(strategy='median')),\n                                                 ('transform',\n                                                  PowerTransformer(standardize=False)),\n                                                 ('scaler', StandardScaler())]),\n                                 ['filterDp', 'rms_vibration', 'serviceHours']),\n                                ('other',\n                                 Pipeline(steps=[('imputer',\n                                                  SimpleImputer(strategy='median')),\n                                                 ('scaler', StandardScaler())]),\n                                 ['currentMotor', 'oilTemperature',\n                                  'reservoir_pressure', 'Flowmeter',\n                                  'dewpointDischarge']),\n                                ('missing', MissingIndicator(features='all'),\n                                 ['filterDp', 'rms_vibration'])])",
+  "imputation_medians": {
+    "skewed": {
+      "filterDp": 21.43069,
+      "rms_vibration": 2.72508,
+      "serviceHours": 12162.8
+    },
+    "other": {
+      "currentMotor": 5.2289449999999995,
+      "oilTemperature": 55.03321,
+      "reservoir_pressure": 8.712679999999999,
+      "Flowmeter": 27.989424999999997,
+      "dewpointDischarge": 8.022575
+    }
+  },
+  "hyperparameters": {
+    "C": 0.1,
+    "class_weight": "balanced",
+    "dual": false,
+    "fit_intercept": true,
+    "intercept_scaling": 1,
+    "l1_ratio": 0.0,
+    "max_iter": 3000,
+    "n_jobs": null,
+    "penalty": "deprecated",
+    "random_state": null,
+    "solver": "lbfgs",
+    "tol": 0.0001,
+    "verbose": 0,
+    "warm_start": false
+  },
+  "threshold": {
+    "value": 0.49049186389469285,
+    "rule": "max F2 na out-of-fold predikciach 5-fold StratifiedGroupKFold (train)"
+  },
+  "training_data": {
+    "rows": 11514,
+    "units": 1598,
+    "failure_rate": 0.12159110647906896,
+    "cycle_ts_min": "2023-01-01 00:00:00",
+    "cycle_ts_max": "2023-12-31 20:11:00",
+    "split": "80/20 po id_unit, stratifikacia podla failure jednotky, random_state=42 (2.1 A)"
+  },
+  "metrics": {
+    "cv": {
+      "pr_auc": 0.48344494120325193,
+      "roc_auc": 0.7949799724429635,
+      "balanced_accuracy": 0.7264101231679799,
+      "f1": 0.4087648901830251
+    },
+    "test_at_threshold": {
+      "pr_auc": 0.4366241201089941,
+      "roc_auc": 0.795517556038736,
+      "balanced_accuracy": 0.7328772954706206,
+      "precision": 0.2881944444444444,
+      "recall": 0.7033898305084746,
+      "f1": 0.4088669950738916,
+      "f2": 0.5460526315789473,
+      "accuracy": 0.7552685248130524
+    }
+  }
+}
