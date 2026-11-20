@@ -1,6 +1,6 @@
 {
   "model_name": "LR + indikatory chybania (3.4 D)",
-  "created": "2026-11-20T18:13:16",
+  "created": "2026-11-20T18:25:55",
   "task": "binarna klasifikacia failure (APU predictive maintenance), dataset 046",
   "artifact": {
     "file": "apu_failure_model.joblib",
