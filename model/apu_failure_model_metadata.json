@@ -1,10 +1,10 @@
 {
   "model_name": "LR + indikatory chybania (3.4 D)",
-  "created": "2026-11-20T18:25:55",
+  "created": "2026-11-21T14:56:50",
   "task": "binarna klasifikacia failure (APU predictive maintenance), dataset 046",
   "artifact": {
     "file": "apu_failure_model.joblib",
-    "sha256": "b64debfbf932e8a9143fde5afe61ddf4478b4ffa7bb816efa27e9ca7ce51993c"
+    "sha256": "30089be880e53848c8d094f8844dc41743890169e304281f74004d261c5ce3b6"
   },
   "environment": {
     "python": "3.14.10",
@@ -89,8 +89,11 @@
     },
     "function": "build_integrated_dataset (2.1 A)"
   },
-  "preprocessing": "ColumnTransformer(transformers=[('categorical',\n                                 OrdinalEncoder(categories=[['light', 'medium',\n                                                             'heavy']]),\n                                 ['class_duty']),\n                                ('skewed',\n                                 Pipeline(steps=[('imputer',\n                                                  SimpleImputer(strategy='median')),\n                                                 ('transform',\n                                                  PowerTransformer(standardize=False)),\n                                                 ('scaler', StandardScaler())]),\n                                 ['filterDp', 'rms_vibration', 'serviceHours']),\n                                ('other',\n                                 Pipeline(steps=[('imputer',\n                                                  SimpleImputer(strategy='median')),\n                                                 ('scaler', StandardScaler())]),\n                                 ['currentMotor', 'oilTemperature',\n                                  'reservoir_pressure', 'Flowmeter',\n                                  'dewpointDischarge']),\n                                ('missing', MissingIndicator(features='all'),\n                                 ['filterDp', 'rms_vibration'])])",
+  "preprocessing": "ColumnTransformer(transformers=[('categorical',\n                                 Pipeline(steps=[('ordinal',\n                                                  OrdinalEncoder(categories=[['light',\n                                                                              'medium',\n                                                                              'heavy']],\n                                                                 handle_unknown='use_encoded_value',\n                                                                 unknown_value=nan)),\n                                                 ('imputer',\n                                                  SimpleImputer(strategy='most_frequent'))]),\n                                 ['class_duty']),\n                                ('skewed',\n                                 Pipeline(steps=[('range',\n                                                  PhysicalRangeToNaN(lower_bound_only=('filterDp',),\n                                                                     ranges={'Fl...\n                                                                             'filterDp': (0,\n                                                                                          60),\n                                                                             'oilTemperature': (-20,\n                                                                                                110),\n                                                                             'reservoir_pressure': (0,\n                                                                                                    12),\n                                                                             'rms_vibration': (0,\n                                                                                               15),\n                                                                             'serviceHours': (0,\n                                                                                              60000)})),\n                                                 ('imputer',\n                                                  SimpleImputer(strategy='median')),\n                                                 ('scaler', StandardScaler())]),\n                                 ['currentMotor', 'oilTemperature',\n                                  'reservoir_pressure', 'Flowmeter',\n                                  'dewpointDischarge']),\n                                ('missing', MissingIndicator(features='all'),\n                                 ['filterDp', 'rms_vibration'])])",
   "imputation_medians": {
+    "categorical": {
+      "class_duty": 0.0
+    },
     "skewed": {
       "filterDp": 21.43069,
       "rms_vibration": 2.72508,
