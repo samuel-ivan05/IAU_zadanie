@@ -1,16 +1,23 @@
 {
   "model_name": "LR + indikatory chybania (3.4 D)",
-  "created": "2026-11-21T14:56:50",
+  "created": "2026-11-21T16:42:37",
   "task": "binarna klasifikacia failure (APU predictive maintenance), dataset 046",
   "artifact": {
     "file": "apu_failure_model.joblib",
-    "sha256": "30089be880e53848c8d094f8844dc41743890169e304281f74004d261c5ce3b6"
+    "sha256": "3c4755efa8c976f390cf50422428b8959f7ff0947abc2dd0a61c0df7ccd611a9"
   },
   "environment": {
     "python": "3.14.10",
     "scikit_learn": "1.9.1",
     "pandas": "3.0.6",
     "numpy": "2.5.3"
+  },
+  "required_code": {
+    "file": "apu_transformers.py",
+    "classes": [
+      "PhysicalRangeToNaN"
+    ],
+    "load": "sys.path.insert(0, 'model'); joblib.load('model/apu_failure_model.joblib')"
   },
   "input_columns": [
     "class_duty",
